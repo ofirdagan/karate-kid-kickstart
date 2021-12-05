@@ -47,7 +47,7 @@ Here are some products you can/should play with:
 
 ## Learn wix data (relevant for velo employees)
 "A code-free introduction to Wix Content Manager" 
-Udemy user: royplatform@wix.com  pass: asfaSvsdt391#(
+
 
 ## Deadtime tasks:
 
