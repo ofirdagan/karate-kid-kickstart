@@ -43,7 +43,7 @@ Here are some products you can/should play with:
 * Forms
 * Chat
 * Contacts
-* Velo project - find a small project that will help you in your lifea and implement it using velo. For example, [here's](https://www.parkingstatus.info/) a website that shows the parking lots status in TLV's old north neighborhood (if you want to change the parking lot that it shows u can add `parkingIds` param and specify the parking lot that u want)
+* Velo project - find a small project that will help you in your life and implement it using velo. For example, [here's](https://www.parkingstatus.info/) a website that shows the parking lots status in TLV's old north neighborhood (if you want to change the parking lot that it shows u can add `parkingIds` param and specify the parking lot that u want)
 
 ## Learn wix data (relevant for velo employees)
 "A code-free introduction to Wix Content Manager" 
