@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Vanilla TODO List</h1>
+    <div class='main-body' style='display:flex; flex-direction:row;'>
+        <div class='menu'>
+            <div class='menu-title'>
+                edit items here
+            </div>
+            <div class='item' style='display:flex; flex-direction:column; align-items: end;'>
+                <div>title: <input type='text'/></div>
+                <div>subtitle: <input type='text'/></div>
+                <div>description: <input type='textarea'/></div>
+            </div>
+            <button class='menu-button'>
+                add/edit
+            </button>
+        </div>
+        <div class='display'>
+            <ul class='TODO-List'>
+                <ol class='TODO-Item' style='padding:5px; border-radius: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
+                    <div>title</div>
+                    <div>sub-title</div>
+                    <div>description</div>
+                </ol>
+            </ul>
+        </div>
+    </div>
+</body>
+<style src='style.css'></style>
+</html>
