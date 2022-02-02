@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body style='display:flex; flex-direction:column;'>
-    <div class=header style='background-color: lightblue; padding: 20px 20px 10px 20px; border-bottom: solid 3px rgb(0, 140, 255);'>
+<body class='page-body'>
+    <div class='header' >
             <h1>Vanilla TODO List</h1>
     </div>
-    <div class='main-body' style='display:flex; flex-direction:row;'>
-        <div class='menu' style='background-color: whitesmoke; padding: 10px; border-right: solid 2px grey;'>
+    <div class='main-body'>
+        <div class='menu'>
             <div class='menu-title' >
                 add new items here
             </div>
-            <div class='item' style='display:flex; flex-direction:column; align-items: end;'>
-                <div style='margin:5px'>title: <input class='title-input' type='text'/></div>
+            <div class='item'>
+                <div style='margin:5px'>title: <input required class='title-input' type='text'/></div>
                 <div style='margin:5px'>subtitle: <input class='subtitle-input' type='text'/></div>
                 <div style='display:flex;align-self: flex-start; margin:5px'>description: <input class='description-input' style='height:50px' type='textarea'/></div>
             </div>
@@ -24,18 +25,18 @@
                 add item/ add changes
             </button>
         </div>
-        <div class='display' style='min-width:40%;max-width:60%; display: flex; flex-direction: column; margin: 10px'>
+        <div class='display'>
             <ul class='todo-list'>
-                <ol class='todo-Item' style='display: flex; flex-direction: row;padding:5px; border-radius: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
-                    <input type='checkbox'/>
-                    <div class='todo-item-text' style='display: flex; flex-direction: column;'>
-                        <div>title</div>
-                        <div>sub-title</div>
-                        <div>description</div>
+                <ol class='todo-item'>
+                    <input class='item-checkbox' type='checkbox'/>
+                    <div class='todo-item-text'>
+                        <div class='todo-item-title'>title</div>
+                        <div class='todo-item-subtitle'>sub-title</div>
+                        <div class='todo-item-description'>description</div>
                     </div>
-                    <div class='todo-item-buttons' style='display: flex; flex-direction: row; align-items: flex-start;'>
-                        <button>edit</button>
-                        <button>delete</button>
+                    <div class='todo-item-buttons'>
+                        <button class='item-edit-button'>edit</button>
+                        <button class='item-delete-button'>delete</button>
                     </div>
                 </ol>
             </ul>
@@ -43,5 +44,4 @@
         </div>
     </div>
 </body>
-<style src='style.css'></style>
 </html>
