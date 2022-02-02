@@ -33,20 +33,9 @@
         </div>
         <div class='display'>
             <ul id='list' class='todo-list'>
-                <ol class='todo-item'>
-                    <input class='item-checkbox' type='checkbox'/>
-                    <div class='todo-item-text'>
-                        <div class='todo-item-title'>title</div>
-                        <div class='todo-item-subtitle'>sub-title</div>
-                        <div class='todo-item-description'>description</div>
-                    </div>
-                    <div class='todo-item-buttons'>
-                        <button class='item-edit-button' onclick='goToEdit(this)'>edit</button>
-                        <button class='item-delete-button' onclick='delete_item(this)'>delete</button>
-                    </div>
-                </ol>
+                <!-- to be added dynamiclly-->
             </ul>
-            <button class='add-button' onclick="addItem()">add new todo item</button>
+            <button class='add-button' onclick="add_button(this)">add new todo item</button>
         </div>
     </div>
 </body>
