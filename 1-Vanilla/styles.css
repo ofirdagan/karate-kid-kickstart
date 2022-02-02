@@ -38,7 +38,7 @@ body {
     font-size: 1.5rem;
 }
 
-.todo-button {
+button {
     font-size: 1.5rem;
     background-color: white;
     border-radius: 10px;
@@ -49,22 +49,34 @@ body {
     background-color: rgb(101, 222, 15);
     cursor: pointer;
 }
+.delete-button:hover {
+    background-color: rgba(140, 31, 31, 0.529);
+    cursor: pointer;
+}
 
-.todo-list--container {
+.todo-list-container {
     background-color: white;
     border-radius: 10px;
     margin-top: 20px;
     padding: 20px;
     height: 100%;
 }
-.todo-list {
+#todo-list {
     padding-left: 5px;
 }
 
-.todo-list-element {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    font-size: 1.5rem;
 
+.todo-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 0;
+    font-size: 1.5rem;
+    border-bottom: 1px solid lightgrey;
 }
+
+.todo-item {
+    flex-grow: 1;
+}
+
+
