@@ -1,3 +1,17 @@
+button{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: none;
+    background-color: white;
+    border-radius: 10px;
+    height:40px;
+    margin: 5px  
+}
+button:hover{
+    transform: scale(1.3)
+}
+input:hover{
+    transform: scale(1.1);
+}
 .page-body{
     display:flex;
     flex-direction:column;
@@ -31,9 +45,13 @@
 .todo-item{
     display: flex; 
     flex-direction: row;
+    justify-content: space-between;
     padding:5px; 
     border-radius: 10px; 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.todo-item:hover{
+    transform: scale(1.1);
 }
 .item-checkbox{
     margin-right: 10px;
@@ -41,10 +59,58 @@
 .todo-item-text{
     display: flex; 
     flex-direction: column;
+    align-self: stretch;
 }
 .todo-item-buttons{
     display: flex; 
     flex-direction: row; 
-    justify-content: flex-end; 
-    align-items: flex-start;
+    justify-content: space-between; 
+    align-items: center;
+}
+.item-edit-button{
+    font-family: 'Material Icons';
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    width:40px;
+    height:40px;
+    border-radius: 30%;
+    background-color: greenyellow;
+}
+.item-edit-button:hover{
+    background-color: seagreen;  
+}
+.item-delete-button{
+    font-family: 'Material Icons';
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    width:40px;
+    height:40px;
+    border-radius: 30%;
+    background-color: tomato;
+}
+.item-delete-button:hover{
+    background-color: crimson;
+}
+.item-checkbox{
+    align-self: center;
+}
+.item-checkbox:hover{
+    transform: scale(1.3);
+}
+.todo-item-title{
+    font-size: 20px;
+    font-weight: bold;
+}
+.todo-item-subtitle{
+    font-size: 20px;
+    color: grey;
+    font-weight: thin;
+    padding-left: 15px;
+}
+.todo-item-description{
+    font-weight: thin;
+    padding-left: 15px;
+    color: grey;
 }
