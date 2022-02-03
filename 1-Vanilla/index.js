@@ -114,7 +114,6 @@ function delete_item(item_id){
         return
     }
     let item = document.getElementById(item_id)
-    console.log(item)
     let list = document.getElementById('list')
     list.removeChild(item)
 }
@@ -165,7 +164,6 @@ function add_button(caller){
 
 // attach functions to menu buttons
 window.onload = function(){
-    console.log(document.getElementById('clear-button'))
     document.getElementById('clear-button').setAttribute('onclick','clear_menu()')
     document.getElementById('menu-button').setAttribute('onclick','menu_button()')
     document.getElementById('cancel-button').setAttribute('onclick','cancel_edit()')
