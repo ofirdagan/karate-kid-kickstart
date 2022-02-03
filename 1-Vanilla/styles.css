@@ -36,6 +36,8 @@ body {
     border: none;
     outline: 0;
     font-size: 1.5rem;
+    flex-grow: 1;
+
 }
 
 button {
@@ -53,7 +55,10 @@ button {
     background-color: rgba(140, 31, 31, 0.529);
     cursor: pointer;
 }
-
+.edit-button:hover {
+    background-color: rgba(31, 42, 140, 0.529);
+    cursor: pointer;
+}
 .todo-list-container {
     background-color: white;
     border-radius: 10px;
@@ -77,6 +82,10 @@ button {
 
 .todo-item {
     flex-grow: 1;
+    height: 30px;
+    border: none;
+    outline: 0;
+    font-size: 1.5rem;
 }
 
 
