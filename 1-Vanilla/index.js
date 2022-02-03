@@ -1,9 +1,6 @@
-var edited_id = 'empty';
+var edited_id = localStorage.length;
 var edit_mode = false;
 var id = 1;
-
-
-
 
 function add_item(){
     let title = document.getElementById('title-input').value
@@ -18,10 +15,104 @@ function add_item(){
     let subtitle = document.getElementById('subtitle-input').value
     let description = document.getElementById('description-input').value
     let list = document.getElementById('list')
+
+    let itemElement = create_todo_item_element(id,title,subtitle,description)
+
+
+    // finally append item to the list
+    list.appendChild(itemElement)
+
+    // now save to local storage
+    let itemObject = `title: ${title};subtitle: ${subtitle};description: ${description}`
+    localStorage.setItem(id,itemObject)
+    // reset menu display
+    document.getElementById('title-input').value = ''
+    document.getElementById('subtitle-input').value = ''
+    document.getElementById('description-input').value = ''
+    document.getElementById('menu-button').innerText = 'add item'
+    
+    // dont forget to change the id variable
+    id++
+}
+
+function edit_item(item_id){
+    edited_id = item_id
+    document.getElementById('title-input').value = document.getElementById(`title${item_id}`).innerText
+    document.getElementById('subtitle-input').value = document.getElementById(`subtitle${item_id}`).innerText
+    document.getElementById('description-input').value = document.getElementById(`description${item_id}`).innerText
+    edit_mode = true //to disable item deletion
+    document.getElementById('cancel-button').hidden = false // to exit edit mode
+    document.getElementById('menu-button').innerText = 'add changes' // to save changes and exit edit mode
+}
+
+function delete_item(item_id){
+    if(edit_mode){
+        console.log('cant delete while in edit mode')
+        return
+    }
+    let item = document.getElementById(item_id)
+    let list = document.getElementById('list')
+    // remove from display
+    list.removeChild(item)
+    // remove from item storage
+    localStorage.removeItem(item_id)
+}
+
+function cancel_edit(){
+    document.getElementById('title-input').value = ''
+    document.getElementById('subtitle-input').value = ''
+    document.getElementById('description-input').value = ''
+    edit_mode = false
+    document.getElementById('menu-button').innerText = 'add item'
+    document.getElementById('cancel-button').hidden = true
+    edited_id = 0  
+}
+
+function clear_menu(){
+    document.getElementById('title-input').value = ''
+    document.getElementById('subtitle-input').value = ''
+    document.getElementById('description-input').value = ''
+}
+
+function menu_button(){
+    if(!edit_mode){
+        add_item()
+    }else{
+        if (document.getElementById('title-input').value == ''){
+            console.log('cant set an empty title')
+            return
+        }
+        let title = document.getElementById('title-input').value
+        let subtitle = document.getElementById('subtitle-input').value
+        let description = document.getElementById('description-input').value
+        document.getElementById(`title${edited_id}`).innerText = title
+        document.getElementById(`subtitle${edited_id}`).innerText  = subtitle
+        document.getElementById(`description${edited_id}`).innerText  = description
+        // now update item in local storage
+        let itemObject = `title: ${title};subtitle: ${subtitle};description: ${description}`
+        localStorage.setItem(edited_id,itemObject)
+
+        document.getElementById('title-input').value = ''
+        document.getElementById('subtitle-input').value = ''
+        document.getElementById('description-input').value = ''
+        edit_mode = false
+        document.getElementById('menu-button').innerText = 'add item'
+        document.getElementById('cancel-button').hidden = true
+        edited_id = 0
+    }
+}
+function add_button(caller){
+    document.getElementById('title-input').value = ''
+    document.getElementById('subtitle-input').value = ''
+    document.getElementById('description-input').value = ''
+    document.getElementById('title-input').focus()
+}
+function create_todo_item_element(item_id,title,subtitle,description){
+
     // ol todo-item
     let itemElement = document.createElement('ol')
     itemElement.className = 'todo-item'
-    itemElement.id = id;
+    itemElement.id = item_id;
         // input checkbox
         let itemCheckboxElement = document.createElement('input')
         itemCheckboxElement.type = 'checkbox'
@@ -33,17 +124,17 @@ function add_item(){
             let titleElement = document.createElement('div')
             titleElement.innerText = title
             titleElement.className = 'todo-item-title'
-            titleElement.id = 'title'+id
+            titleElement.id = 'title'+item_id
             // item subtitle
             let subtitleElement = document.createElement('div')
             subtitleElement.innerText = subtitle
             subtitleElement.className = 'todo-item-subtitle'
-            subtitleElement.id = 'subtitle'+id
+            subtitleElement.id = 'subtitle'+item_id
             // item description
             let descriptionElement = document.createElement('div')
             descriptionElement.innerText = description
             descriptionElement.className = 'todo-item-description'
-            descriptionElement.id = 'description'+id
+            descriptionElement.id = 'description'+item_id
             // div todo-item-buttons
         let itemButtonsElement = document.createElement('div')
         itemButtonsElement.className = 'todo-item-buttons'
@@ -51,12 +142,12 @@ function add_item(){
             let editButtonElement = document.createElement('button')
             editButtonElement.innerText = 'edit'
             editButtonElement.className = 'item-edit-button'
-            editButtonElement.setAttribute('onclick',`edit_item(${id})`)
+            editButtonElement.setAttribute('onclick',`edit_item(${item_id})`)
             // button delete
             let deleteButtonElement = document.createElement('button')
             deleteButtonElement.innerText = 'delete'
             deleteButtonElement.className = 'item-delete-button'
-            deleteButtonElement.setAttribute('onclick',`delete_item(${id})`)
+            deleteButtonElement.setAttribute('onclick',`delete_item(${item_id})`)
 
     // append the text to parent
     itemTextElement.appendChild(titleElement)
@@ -85,86 +176,27 @@ function add_item(){
     //    </div> 
     // </ol>
 
-    // finally append item to the list
-    list.appendChild(itemElement)
-
-    // reset menu display
-    document.getElementById('title-input').value = ''
-    document.getElementById('subtitle-input').value = ''
-    document.getElementById('description-input').value = ''
-    document.getElementById('menu-button').innerText = 'add item'
-    
-    // dont forget to change the id variable
-    id++
+    return itemElement
 }
-
-function edit_item(item_id){
-    edited_id = item_id
-    document.getElementById('title-input').value = document.getElementById(`title${item_id}`).innerText
-    document.getElementById('subtitle-input').value = document.getElementById(`subtitle${item_id}`).innerText
-    document.getElementById('description-input').value = document.getElementById(`description${item_id}`).innerText
-    edit_mode = true //to disable item deletion
-    document.getElementById('cancel-button').hidden = false // to exit edit mode
-    document.getElementById('menu-button').innerText = 'add changes' // to save changes and exit edit mode
-}
-
-function delete_item(item_id){
-    if(edit_mode){
-        console.log('cant delete while in edit mode')
-        return
-    }
-    let item = document.getElementById(item_id)
-    let list = document.getElementById('list')
-    list.removeChild(item)
-}
-
-function cancel_edit(){
-    document.getElementById('title-input').value = ''
-    document.getElementById('subtitle-input').value = ''
-    document.getElementById('description-input').value = ''
-    edit_mode = false
-    document.getElementById('menu-button').innerText = 'add item'
-    document.getElementById('cancel-button').hidden = true
-    edited_id = 0  
-}
-
-function clear_menu(){
-    document.getElementById('title-input').value = ''
-    document.getElementById('subtitle-input').value = ''
-    document.getElementById('description-input').value = ''
-}
-
-function menu_button(){
-    if(!edit_mode){
-        add_item()
-    }else{
-        if (document.getElementById('title-input').value == ''){
-            console.log('cant set an empty title')
-            return
-        }
-        document.getElementById(`title${edited_id}`).innerText = document.getElementById('title-input').value
-        document.getElementById(`subtitle${edited_id}`).innerText  = document.getElementById('subtitle-input').value
-        document.getElementById(`description${edited_id}`).innerText  = document.getElementById('description-input').value
-
-        document.getElementById('title-input').value = ''
-        document.getElementById('subtitle-input').value = ''
-        document.getElementById('description-input').value = ''
-        edit_mode = false
-        document.getElementById('menu-button').innerText = 'add item'
-        document.getElementById('cancel-button').hidden = true
-        edited_id = 0
-    }
-}
-function add_button(caller){
-    document.getElementById('title-input').value = ''
-    document.getElementById('subtitle-input').value = ''
-    document.getElementById('description-input').value = ''
-    document.getElementById('title-input').focus()
-}
-
 // attach functions to menu buttons
 window.onload = function(){
     document.getElementById('clear-button').setAttribute('onclick','clear_menu()')
     document.getElementById('menu-button').setAttribute('onclick','menu_button()')
     document.getElementById('cancel-button').setAttribute('onclick','cancel_edit()')
+    // load display todo items from local storage
+    let list = document.getElementById('list')
+    for (let key in localStorage) {
+        if(isNaN(Number(key)))
+            continue;
+        let item_string = localStorage.getItem(key)
+        item_string = item_string.split(';')
+        let title = item_string[0].split(':')[1]
+        let subtitle = item_string[1].split(':')[1]
+        let description = item_string[2].split(':')[1]
+        let item_element = create_todo_item_element(Number(key),title,subtitle,description)
+        list.appendChild(item_element)
+        if(id < Number(key)){
+            id = Number(key)+1
+        }
+    }
 }
