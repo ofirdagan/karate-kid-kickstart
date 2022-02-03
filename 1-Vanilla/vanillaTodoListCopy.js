@@ -2,13 +2,21 @@
 (function () {
     // some initiation code
 
+const createCheck = (todoObj) => {
+    let checkDiv = document.createElement('input');
+    checkDiv.type = 'checkbox'
+    const checkDivClassName = "checked"
+    checkDiv.classList.add(checkDivClassName)
+    checkDiv.onclick = function(){handleCheckedClick(todoObj.id)}
+    
+    return checkDiv
+}
 
 const createButton = (type, todoObj) => {
     let button = document.createElement('button');
     const buttonClassName = `${type}-button`
     button.classList.add(buttonClassName)
     button.appendChild(createIcon(type, todoObj.id))
-    // button.addEventListener('click', handleButtonClick)
     button.onclick = function(){handleButtonClick(type, todoObj.id)}
     return button
 } 
@@ -17,24 +25,28 @@ const createIcon = (type, id)  => {
     let icon = document.createElement('i');
     let iconClassName = ""
     let iconId = ``
-    if (type === 'delete'){
-        iconClassName = "fas fa-trash";
-        iconId = `icon-delete-${id}`
-    }
-    else if (type === 'edit') {
-        iconClassName = "fas fa-edit";
-        iconId = `icon-edit-${id}`
-    }else{ 
-        console.log('text');;
-    }
     debugger
+    switch(type) {
+        case 'delete':
+            iconClassName = "fas fa-trash";
+            iconId = `icon-delete-${id}`
+            break;
+        case 'edit':
+            iconClassName = "fas fa-edit";
+            iconId = `icon-edit-${id}`
+            break;
+        case 'check':
+            iconClassName = "fa-check";
+            iconId = `icon-check-${id}`
+        default:
+            // none
+    }
     icon.innerHTML = `<i class="${iconClassName}" id="${iconId}"></i>`
     return icon
 }
 
 
 function handleButtonClick(type, todoId) {
-    // console.log(e.currentTarget.className);
     debugger
     if (type === 'delete'){
         handleDeleteTodo(todoId)
@@ -46,6 +58,11 @@ function handleButtonClick(type, todoId) {
     }
 }   
 
+function handleCheckedClick(todoObjId) {
+    debugger
+    const todo = document.getElementById(`todo-item-${todoObjId}`)
+    todo.classList.toggle('completed')
+}
 
 function handleSubmitTodo(e) {
     e.preventDefault();
@@ -77,7 +94,6 @@ function handleEditTodo(todoId){
         let todoIcon = document.getElementById(`icon-edit-${todoId}`)
     } else {
         let todoItem = document.getElementById(`todo-item-${todoId}`)
-        // const todoItemText =  todoItem.value
         todoItem.disabled = true
     }
 }
@@ -101,12 +117,13 @@ function addTodo(todoText) {
     todoDiv.classList.add('todo-item');
     todoDiv.disabled = true
     todoDiv.id = (`todo-item-${todoId}`)
-    // todoDiv.innerHTML = todoText
     todoDiv.value = todoText
     const deleteButton = createButton('delete', todoObj)
     const editButton = createButton('edit', todoObj)
-    
+    const checked = createCheck(todoObj);
+
     // add content to li
+    li.appendChild(checked)
     li.appendChild(todoDiv)
     li.appendChild(deleteButton)
     li.appendChild(editButton)

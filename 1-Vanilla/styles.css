@@ -6,7 +6,6 @@ html {
 }
 
 body {
-    width: 600px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -37,16 +36,15 @@ body {
     outline: 0;
     font-size: 1.5rem;
     flex-grow: 1;
-
 }
 
-button {
+button{
     font-size: 1.5rem;
     background-color: white;
     border-radius: 10px;
     outline: 0; 
+    margin: 5px;
 }
-
 .todo-button:hover {
     background-color: rgb(101, 222, 15);
     cursor: pointer;
@@ -88,4 +86,10 @@ button {
     font-size: 1.5rem;
 }
 
-
+.completed {
+    text-decoration: line-through;
+}
+.checked {
+    margin: 20px;
+    cursor: pointer;
+}
