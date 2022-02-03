@@ -1,23 +1,21 @@
 
 (function () {
-    // some initiation code
 
-const createCheck = (todoObj) => {
+const createCheck = (todoId) => {
     let checkDiv = document.createElement('input');
     checkDiv.type = 'checkbox'
     const checkDivClassName = "checked"
     checkDiv.classList.add(checkDivClassName)
-    checkDiv.onclick = function(){handleCheckedClick(todoObj.id)}
-    
+    checkDiv.onclick = function(){handleCheckedClick(todoId)}
     return checkDiv
 }
 
-const createButton = (type, todoObj) => {
+const createButton = (type, todoId) => {
     let button = document.createElement('button');
     const buttonClassName = `${type}-button`
     button.classList.add(buttonClassName)
-    button.appendChild(createIcon(type, todoObj.id))
-    button.onclick = function(){handleButtonClick(type, todoObj.id)}
+    button.appendChild(createIcon(type, todoId))
+    button.onclick = function(){handleButtonClick(type, todoId)}
     return button
 } 
 const createIcon = (type, id)  => {
@@ -53,14 +51,13 @@ function handleButtonClick(type, todoId) {
     }else if ('edit'){
         handleEditTodo(todoId)
     }else {
-        console.log('text');;
-
+        console.log('text');
     }
 }   
 
-function handleCheckedClick(todoObjId) {
+function handleCheckedClick(todoId) {
     debugger
-    const todo = document.getElementById(`todo-item-${todoObjId}`)
+    const todo = document.getElementById(`todo-item-${todoId}`)
     todo.classList.toggle('completed')
 }
 
@@ -91,7 +88,6 @@ function handleEditTodo(todoId){
     let todoItem = document.getElementById(`todo-item-${todoId}`)
     if (todoItem.disabled) {
         todoItem.disabled = false
-        let todoIcon = document.getElementById(`icon-edit-${todoId}`)
     } else {
         let todoItem = document.getElementById(`todo-item-${todoId}`)
         todoItem.disabled = true
@@ -102,13 +98,7 @@ function handleEditTodo(todoId){
 function addTodo(todoText) {
     // here we need to add a ul
     const todoId = todoList.length
-    const todoObj = {
-        text: todoText,
-        id: todoId,
-        edit: false
-    }
-    todoList.push(todoObj)
-    console.log(todoList);
+    todoList.push(todoId)
 
 
     let ul = document.getElementById('todo-list')
@@ -118,9 +108,9 @@ function addTodo(todoText) {
     todoDiv.disabled = true
     todoDiv.id = (`todo-item-${todoId}`)
     todoDiv.value = todoText
-    const deleteButton = createButton('delete', todoObj)
-    const editButton = createButton('edit', todoObj)
-    const checked = createCheck(todoObj);
+    const deleteButton = createButton('delete', todoId)
+    const editButton = createButton('edit', todoId)
+    const checked = createCheck(todoId);
 
     // add content to li
     li.appendChild(checked)
