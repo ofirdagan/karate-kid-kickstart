@@ -64,8 +64,8 @@ button{
     border-radius: 10px;
     margin-top: 20px;
     padding: 20px;
-    height: 500px;
     overflow: auto;
+    max-height: 500px;
 }
 #todo-list {
     padding-left: 5px;
