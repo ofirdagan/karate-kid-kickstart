@@ -1,30 +1,35 @@
 
-html {
-    height: 100vh;
-    min-width: 600px;
+:root {
+    --main-gradient-color: linear-gradient(to bottom,white, blue);
+    --add-todo-hover: rgb(101, 222, 15);
+    --delete-hover: rgba(140, 31, 31, 0.529);
+    --edit-hover: rgba(31, 42, 140, 0.529);
+
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to bottom,white, blue);
-    background-repeat: no-repeat;
-
+    height: 100vh;
 }
 
 .header {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .main {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--main-gradient-color);
+    background-repeat: no-repeat;
+    height: 100%;
+    min-width: 600px;
 }
 
 .task-form {
-    background-color: rgba(255, 255, 255, 0.475);
     border-radius: 10px;
     display: flex;
     padding: 20px;
@@ -47,27 +52,27 @@ button{
     margin: 5px;
 }
 .todo-button:hover {
-    background-color: rgb(101, 222, 15);
+    background-color: var(--add-todo-hover);
     cursor: pointer;
 }
 .delete-button:hover {
-    background-color: rgba(140, 31, 31, 0.529);
+    background-color: var(--delete-hover);
     cursor: pointer;
 }
 .edit-button:hover {
-    background-color: rgba(31, 42, 140, 0.529);
+    background-color: var(--edit-hover);
     cursor: pointer;
 }
 .todo-list-container {
     background-color: white;
     border-radius: 10px;
     margin-top: 20px;
-    padding: 20px;
     overflow: auto;
     max-height: 500px;
 }
-#todo-list {
+.todo-list {
     padding-left: 5px;
+    /* display: none; */
 }
 
 
@@ -75,9 +80,11 @@ button{
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 15px 0;
+    padding: 15px;
     font-size: 1.5rem;
     border-bottom: 1px solid lightgrey;
+    border-top: 1px solid lightgrey;
+
 }
 
 .todo-item {
@@ -94,4 +101,9 @@ button{
 .checked {
     margin: 20px;
     cursor: pointer;
+}
+
+.my-todo-list-wrap-container {
+    background-color: white;
+    border-radius: 10px;
 }

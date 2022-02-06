@@ -1,12 +1,10 @@
-
-(function () {
-
+(function() {
 const createCheck = (todoId) => {
     let checkDiv = document.createElement('input');
     checkDiv.type = 'checkbox'
     const checkDivClassName = "checked"
     checkDiv.classList.add(checkDivClassName)
-    checkDiv.onclick = function(){handleCheckedClick(todoId)}
+    checkDiv.addEventListener('click', function() {handleCheckedClick(todoId)})
     return checkDiv
 }
 
@@ -15,15 +13,13 @@ const createButton = (type, todoId) => {
     const buttonClassName = `${type}-button`
     button.classList.add(buttonClassName)
     button.appendChild(createIcon(type, todoId))
-    button.onclick = function(){handleButtonClick(type, todoId)}
+    button.addEventListener('click', function() {handleButtonClick(type, todoId)})
     return button
 } 
 const createIcon = (type, id)  => {
-    debugger;
     let icon = document.createElement('i');
     let iconClassName = ""
     let iconId = ``
-    debugger
     switch(type) {
         case 'delete':
             iconClassName = "fas fa-trash";
@@ -39,19 +35,22 @@ const createIcon = (type, id)  => {
         default:
             // none
     }
-    icon.innerHTML = `<i class="${iconClassName}" id="${iconId}"></i>`
+    icon.className = iconClassName;
+    icon.id = iconId
     return icon
 }
 
 
 function handleButtonClick(type, todoId) {
-    debugger
-    if (type === 'delete'){
-        handleDeleteTodo(todoId)
-    }else if ('edit'){
-        handleEditTodo(todoId)
-    }else {
-        console.log('text');
+    switch(type) {
+        case 'delete':
+            handleDeleteTodo(todoId)
+            break;
+        case 'edit':
+            handleEditTodo(todoId)
+            break;
+        default:
+            // none
     }
 }   
 
@@ -77,31 +76,17 @@ function handleSubmitTodo(e) {
 
 function handleDeleteTodo(todoId) {
     // loop over all
-    debugger;
     let li = document.getElementById(`todo-list-item-${todoId}`)
     li.remove()
 }
-
+1
 function handleEditTodo(todoId){
     let li = document.getElementById(`todo-list-item-${todoId}`)
-    debugger;
     let todoItem = document.getElementById(`todo-item-${todoId}`)
-    if (todoItem.disabled) {
-        todoItem.disabled = false
-    } else {
-        let todoItem = document.getElementById(`todo-item-${todoId}`)
-        todoItem.disabled = true
-    }
+    todoItem.disabled = !todoItem.disabled
 }
 
-
-function addTodo(todoText) {
-    // here we need to add a ul
-    const todoId = todoList.length
-    todoList.push(todoId)
-
-
-    let ul = document.getElementById('todo-list')
+function createTodoItem(todoText, todoId) {
     let li = document.createElement('li')
     let todoDiv = document.createElement('input');
     todoDiv.classList.add('todo-item');
@@ -119,6 +104,16 @@ function addTodo(todoText) {
     li.appendChild(editButton)
     li.classList.add('todo-list-item')
     li.id = (`todo-list-item-${todoId}`)
+    return li
+}
+
+
+function addTodo(todoText) {
+    // here we need to add a ul
+    const todoId = todoList.length
+    todoList.push(todoId)
+    let ul = document.getElementById('todo-list');
+    let li = createTodoItem(todoText, todoId)    
     ul.appendChild(li)
 }
     
