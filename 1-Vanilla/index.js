@@ -1,11 +1,9 @@
-// TODO:
-// - split element build to smaller functions
-// - add uuid to items
-// - change variable names to camelCase
-let edited_id = 0;
+let editedID = 0;
 let editMode = false;
-let id = 1;
 
+function getNewID(){
+    return Math.floor(Math.random()*1000)
+}
 function addItem(){
     let title = document.getElementById('title-input').value
     if (title ==''){
@@ -18,7 +16,9 @@ function addItem(){
     }
     let content = document.getElementById('content-input').value
     let list = document.getElementById('list')
+    let id = getNewID()
     let itemElement = createTodoItemElement(id,title,content)
+
     list.appendChild(itemElement)
     // now save to local storage
     let itemString = `title: ${title};content: ${content}`
@@ -27,14 +27,10 @@ function addItem(){
     // reset menu display
     clearMenu()
     document.getElementById('menu-button').innerText = 'add item'
-    
-    // dont forget to change the id variable
-    id++
-    localStorage.setItem('next_id',id)
 }
 
 function sendItemToEdit(itemID){
-    edited_id = itemID
+    editedID = itemID
     document.getElementById('title-input').value = document.getElementById(`title${itemID}`).innerText
     document.getElementById('content-input').value = document.getElementById(`content${itemID}`).innerText
     editMode = true //to disable item deletion
@@ -60,7 +56,7 @@ function cancelEdit(){
     editMode = false
     document.getElementById('menu-button').innerText = 'add item'
     document.getElementById('cancel-button').hidden = true
-    edited_id = 0  
+    editedID = 0  
 }
 
 function clearMenu(){
@@ -78,17 +74,17 @@ function menuButtonClick(){
         }
         let title = document.getElementById('title-input').value
         let content = document.getElementById('content-input').value
-        document.getElementById(`title${edited_id}`).innerText = title
-        document.getElementById(`content${edited_id}`).innerText  = content
+        document.getElementById(`title${editedID}`).innerText = title
+        document.getElementById(`content${editedID}`).innerText  = content
         // now update item in local storage
         let itemObject = `title: ${title};content: ${content}`
-        localStorage.setItem(edited_id,itemObject)
+        localStorage.setItem(editedID,itemObject)
 
         clearMenu()
         editMode = false
         document.getElementById('menu-button').innerText = 'add item'
         document.getElementById('cancel-button').hidden = true
-        edited_id = 0
+        editedID = 0
     }
 }
 function addButton(){
@@ -163,10 +159,6 @@ window.onload = function(){
     document.getElementById('add-button').setAttribute('onclick','addButton()')
     // load display todo items from local storage
     let list = document.getElementById('list')
-    if (localStorage.getItem('next_id')==null){
-        id = 1
-        localStorage.setItem('next_id',1)
-    }
     for (let key in localStorage) {
         if(isNaN(Number(key)))
             continue;
@@ -176,10 +168,5 @@ window.onload = function(){
         let content = itemString[1].split(':')[1]
         let itemElement = createTodoItemElement(Number(key),title,content)
         list.appendChild(itemElement)
-        //make sure we get the right id in store for use
-        if(Number(localStorage.getItem('next_id')) <= Number(key)){
-            localStorage.setItem('next_id',Number(key)+1)
-            id = Number(key)+1
-        }
     }
 }
