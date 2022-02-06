@@ -1,4 +1,4 @@
-var edited_id = localStorage.length;
+var edited_id = 0;
 var edit_mode = false;
 var id = 1;
 
@@ -25,6 +25,7 @@ function add_item(){
     // now save to local storage
     let itemObject = `title: ${title};subtitle: ${subtitle};description: ${description}`
     localStorage.setItem(id,itemObject)
+
     // reset menu display
     document.getElementById('title-input').value = ''
     document.getElementById('subtitle-input').value = ''
@@ -33,6 +34,7 @@ function add_item(){
     
     // dont forget to change the id variable
     id++
+    localStorage.setItem('next_id',id)
 }
 
 function edit_item(item_id){
@@ -185,6 +187,10 @@ window.onload = function(){
     document.getElementById('cancel-button').setAttribute('onclick','cancel_edit()')
     // load display todo items from local storage
     let list = document.getElementById('list')
+    if (localStorage.getItem('next_id')==null){
+        id = 1
+        localStorage.setItem('next_id',1)
+    }
     for (let key in localStorage) {
         if(isNaN(Number(key)))
             continue;
@@ -195,7 +201,9 @@ window.onload = function(){
         let description = item_string[2].split(':')[1]
         let item_element = create_todo_item_element(Number(key),title,subtitle,description)
         list.appendChild(item_element)
-        if(id < Number(key)){
+        //make sure we get the right id in store for use
+        if(Number(localStorage.getItem('next_id')) <= Number(key)){
+            localStorage.setItem('next_id',Number(key)+1)
             id = Number(key)+1
         }
     }
