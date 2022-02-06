@@ -5,7 +5,7 @@ function getNewID(){
     return Math.floor(Math.random()*1000)
 }
 function addItem(){
-    let title = document.getElementById('title-input').value
+    let title = getValue('title-input')
     if (title ==''){
         alert('cant add an item without a title')
         return
@@ -14,7 +14,7 @@ function addItem(){
         alert('cant add an item while in edit mode')
         return
     }
-    let content = document.getElementById('content-input').value
+    let content = getValue('content-input')
     let list = document.getElementById('list')
     let id = getNewID()
     let itemElement = createTodoItemElement(id,title,content)
@@ -26,16 +26,20 @@ function addItem(){
 
     // reset menu display
     clearMenu()
-    document.getElementById('menu-button').innerText = 'add item'
+    setInnerText('menu-button','Add item')
 }
 
 function sendItemToEdit(itemID){
+    
     editedID = itemID
-    document.getElementById('title-input').value = document.getElementById(`title${itemID}`).innerText
-    document.getElementById('content-input').value = document.getElementById(`content${itemID}`).innerText
-    editMode = true //to disable item deletion
-    document.getElementById('cancel-button').hidden = false // to exit edit mode
-    document.getElementById('menu-button').innerText = 'add changes' // to save changes and exit edit mode
+    let title = getInnerText(`title${itemID}`)
+    let content = getInnerText(`content${itemID}`)
+    setValue('title-input',title)
+    setValue('content-input',content)
+    
+    editMode = true
+    document.getElementById('cancel-button').hidden = false
+    setInnerText('menu-button','Add changes')
 }
 
 function deleteItem(itemID){
@@ -54,35 +58,39 @@ function deleteItem(itemID){
 function cancelEdit(){
     clearMenu()
     editMode = false
-    document.getElementById('menu-button').innerText = 'add item'
+    // document.getElementById('menu-button').innerText = 'Add item'
+    setInnerText('menu-button','Add item')
     document.getElementById('cancel-button').hidden = true
     editedID = 0  
 }
 
 function clearMenu(){
-    document.getElementById('title-input').value = ''
-    document.getElementById('content-input').value = ''
+    setValue('title-input','')
+    setValue('content-input','')
+    // document.getElementById('title-input').value = ''
+    // document.getElementById('content-input').value = ''
 }
 
 function menuButtonClick(){
     if(!editMode){
         addItem()
     }else{
-        if (document.getElementById('title-input').value == ''){
+        if (getValue('title-input')==''){
             alert('cant set an empty title')
             return
         }
-        let title = document.getElementById('title-input').value
-        let content = document.getElementById('content-input').value
-        document.getElementById(`title${editedID}`).innerText = title
-        document.getElementById(`content${editedID}`).innerText  = content
+        let title = getValue('title-input')
+        let content = getValue('content-input')
+        setInnerText(`title${editedID}`,title)
+        setInnerText(`content${editedID}`,content)
         // now update item in local storage
         let itemObject = `title: ${title};content: ${content}`
         localStorage.setItem(editedID,itemObject)
 
         clearMenu()
         editMode = false
-        document.getElementById('menu-button').innerText = 'add item'
+        // document.getElementById('menu-button').innerText = 'Add item'
+        setInnerText('menu-button','Add item')
         document.getElementById('cancel-button').hidden = true
         editedID = 0
     }
@@ -90,6 +98,18 @@ function menuButtonClick(){
 function addButton(){
     clearMenu()
     document.getElementById('title-input').focus()
+}
+function getValue(id){
+    return document.getElementById(id).value
+}
+function setValue(id,value){
+    document.getElementById(id).value = value
+}
+function getInnerText(id){
+    return document.getElementById(id).innerText
+}
+function setInnerText(id,text){
+    document.getElementById(id).innerText = text
 }
 function createTodoItemElement(itemID,title,content){
 

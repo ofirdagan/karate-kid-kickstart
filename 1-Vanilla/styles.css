@@ -12,6 +12,9 @@ button:hover{
 input{
     margin: 0px 10px;
 }
+input::-webkit-input-placeholder {
+    color: #b2cde0
+ }
 input:hover{
     transform: scale(1.1);
 }
