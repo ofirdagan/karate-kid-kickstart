@@ -1,0 +1,19 @@
+{
+  "name": "karate-kid-kickstart",
+  "version": "1.0.0",
+  "description": "The karate kid kickstart is an intense, almost entirely self learnt,  karate kid style (wash in, wash out) 13 steps program for front end developers where the trainee has to write the same app over and over from scratch. Starting from the most simple vanilla JS through writing a simple server with a DB, learning about webpack, flex css, localstorage, cookies, https, jwt, tests, react and much more.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haimre/karate-kid-kickstart.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haimre/karate-kid-kickstart/issues"
+  },
+  "homepage": "https://github.com/haimre/karate-kid-kickstart#readme"
+}
