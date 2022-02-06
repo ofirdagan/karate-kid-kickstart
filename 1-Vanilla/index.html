@@ -21,15 +21,11 @@
                 Edit items and add new items
             </div>
             <div class='item'>
-                <div style='margin:5px'>title: <input id='title-input' required class='title-input' type='text'/></div>
-                <div style='margin:5px'>subtitle: <input id='subtitle-input'  class='subtitle-input' type='text'/></div>
-                <div style='display:flex;align-self: flex-start; margin:5px'>description: <input id='description-input' class='description-input' style='height:50px' type='textarea'/></div>
+                <div class='menu-item'>title: <input id='title-input' required class='title-input' type='text'/></div>
+                <div class='menu-item'>content: <input id='content-input' class='content-input' style='height:50px' type='textarea'/></div>
             </div>
             <div class='menu-buttons'>
-                <!-- <button class='clear-button' onclick='clear_menu()'>clear</button>
-                <button id='menu-button' class='menu-button' onclick='menu_button(this)'>add item</button>
-                <button id='cancel-button' class='menu-button' onclick='cancel_edit(this)' hidden='true'>cancel edit</button> -->
-                                <button id='clear-button' class='clear-button'>clear</button>
+                <button id='clear-button' class='clear-button'>clear</button>
                 <button id='menu-button' class='menu-button'>add item</button>
                 <button id='cancel-button' class='menu-button' hidden='true'>cancel edit</button>
             </div>
@@ -38,7 +34,7 @@
             <ul id='list' class='todo-list'>
                 <!-- to be added dynamically-->
             </ul>
-            <button class='add-button' onclick="add_button(this)">add new todo item</button>
+            <button id='add-button' class='add-button'>add new todo item</button>
         </div>
     </div>
 </body>

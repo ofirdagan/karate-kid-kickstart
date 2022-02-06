@@ -36,6 +36,9 @@ input:hover{
     display: flex;
     justify-content: space-around;
 }
+.menu-item{
+    margin: 5px;
+}
 .item{
     display:flex; 
     flex-direction:column; 
@@ -67,7 +70,7 @@ input:hover{
 .item-checkbox:checked ~div.todo-item-text > .todo-item-subtitle {
     text-decoration: line-through;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-description {
+.item-checkbox:checked ~div.todo-item-text > .todo-item-content {
     display: none;
 }
 .todo-item-text{
@@ -123,7 +126,7 @@ input:hover{
     font-weight: thin;
     padding-left: 15px;
 }
-.todo-item-description{
+.todo-item-content{
     font-weight: thin;
     padding-left: 15px;
     color: grey;
