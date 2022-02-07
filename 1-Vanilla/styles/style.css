@@ -1,0 +1,162 @@
+:root {
+    --logo-blue: #0b79a5;
+    --background-blue: #e5f6fd;
+    --hover-blue: #d7f2fd;
+    --shadow-blue: #085b7c;
+    --dark-green: rgb(48, 78, 58);
+    --light-green: rgb(150, 202, 167);
+    --dark-red: rgb(78, 25, 23);
+    --light-red: rgb(204, 124, 121);
+    --dark-yellow: rgb(104, 89, 2);
+    --light-yellow: rgb(194, 173, 53);
+    --dark-gray: #505050;
+    --light-gray: #b3b3b3;
+  }
+
+html {
+    font-size: 18px;
+    font-family: "Lato", sans-serif;
+}
+
+body {
+    margin: 0px;
+    background: var(--background-blue)
+}
+
+.header {
+    background-color: white;
+    padding: 5px;
+    position: fixed;
+    width: 100%;
+    box-shadow: 3px 3px 3px var(--shadow-blue);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: top;
+    top: 0px;
+}
+
+.main {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;
+    font-size: 14px;
+    background: transparent;
+    margin-top: 120px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo {
+    color: var(--logo-blue);
+    padding: 5px;
+    font-family: 'Comforter', cursive;
+    font-size: 42px;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    text-align: center;
+    box-shadow: 3px 3px 3px var(--shadow-blue);
+    width: 100%;
+    margin: 10px;
+}
+
+.item-bar:hover {
+    background: var(--hover-blue);
+}
+
+input[type="text"]  {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 18px;
+}
+
+input[type="text"].edit  {
+    border: 1px solid black;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.btn {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#add-btn {
+    background: var(--logo-blue);
+    color: var(--background-blue)
+}
+
+#add-btn:hover {
+    background: var(--background-blue);
+    color: var(--logo-blue)
+}
+
+.edit-btn {
+    color: var(--light-green)
+}
+
+.edit-btn:hover {
+    color: var(--dark-green);
+    background: var(--light-green);
+}
+
+.confirm-btn {
+    color: var(--light-green)
+}
+
+.confirm-btn:hover {
+    color: var(--dark-green);
+    background: var(--light-green);
+}
+
+.check-btn {
+    color: var(--light-gray);
+    background: var(--light-gray);
+}
+
+.check-btn:hover {
+    color: var(--dark-gray);
+    background: var(--dark-gray);
+}
+
+.check-btn.checked {
+    color: var(--dark-gray);
+    background: var(--light-gray);
+}
+
+.check-btn.checked:hover {
+    color: var(--light-gray);
+    background: var(--dark-gray);
+}
+
+.remove-btn {
+    color: var(--light-red)
+}
+
+.remove-btn:hover {
+    color: var(--dark-red);
+    background: var(--light-red);
+}
+
+.item {
+    width: 100%;
+    font-size: 18px;
+    padding: 10px;
+    text-align: left;
+    display: block;
+}
