@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="index.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla TODO List</title>
+</head>
+<body class='page-body'>
+    <div class='header' >
+            <h1>Vanilla TODO List</h1>
+    </div>
+    <div class='main-body'>
+        <div class='menu'>
+            <div class='menu-title' >
+                Edit items and add new items
+            </div>
+            <div class='item'>
+                <div class='menu-item'><span>title: </span><input id='title-input' required class='title-input' type='text'/></div>
+                <div class='menu-item'><span>content: </span><input id='content-input' class='content-input' type='textarea'/></div>
+            </div>
+            <div class='menu-buttons'>
+                <button id='clear-button' class='clear-button'>clear</button>
+                <button id='menu-button' class='menu-button'>add item</button>
+                <button id='cancel-button' class='menu-button' hidden='true'>cancel edit</button>
+            </div>
+        </div>
+        <div class='display'>
+            <ul id='list' class='todo-list'>
+                <!-- to be added dynamically-->
+            </ul>
+            <button id='add-button' class='add-button'>add new todo item</button>
+        </div>
+    </div>
+</body>
+</html>
