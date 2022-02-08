@@ -59,13 +59,16 @@ input:hover{
     align-items: end;
 }
 .display{
-    min-width: 40%;
-    max-width: 60%;
+    min-width: 50%;
+    max-width: 70%;
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    margin: 30px 70px;
     justify-content: start;
-    align-items: center;
+    align-items: stretch;
+}
+.list{
+    padding-right: 50px;
 }
 .todo-item{
     display: flex; 
@@ -75,6 +78,9 @@ input:hover{
     border-radius: 10px; 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-bottom: 12px;
+}
+.todo-item:hover{
+    background-color: whitesmoke;
 }
 .item-checkbox{
     margin-right: 10px;

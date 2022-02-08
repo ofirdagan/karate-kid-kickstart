@@ -17,18 +17,31 @@ function addItem(){
     const content = getValue('content-input')
     const list = document.getElementById('list')
     const id = getNewID()
+    setItemToLocalstorage(id, title,content)
     const itemElement = createTodoItemElement(id,title,content)
-
     list.appendChild(itemElement)
-    // now save to local storage
-    const itemString = `title: ${title};content: ${content}`
-    localStorage.setItem(id,itemString)
-
     // reset menu display
     clearMenu()
-    setInnerText('menu-button','Add')
+    setInnerText('apply-button','Add')
 }
-
+function setItemToLocalstorage(id, title, content){
+    const item = {
+        "title": title,
+        "content": content
+    }
+    const todoListString = localStorage.getItem('TODO-List')
+    const todoMap = JSON.parse(todoListString)
+    //inset item to todo map
+    todoMap[id]=item
+    localStorage.setItem('TODO-List',JSON.stringify(todoMap))
+}
+function removeItemFromLocalstorage(id){
+    const todoListString = localStorage.getItem('TODO-List')
+    const todoMap = JSON.parse(todoListString)
+    //inset item to todo map
+    delete todoMap[id]
+    localStorage.setItem('TODO-List',JSON.stringify(todoMap))
+}
 function sendItemToEdit(itemID){
     
     editedID = itemID
@@ -39,7 +52,7 @@ function sendItemToEdit(itemID){
     
     editMode = true
     document.getElementById('cancel-button').hidden = false
-    setInnerText('menu-button','Apply')
+    setInnerText('apply-button','Apply')
 }
 
 function deleteItem(itemID){
@@ -58,7 +71,7 @@ function deleteItem(itemID){
 function cancelEdit(){
     clearMenu()
     editMode = false
-    setInnerText('menu-button','Add')
+    setInnerText('apply-button','Add')
     document.getElementById('cancel-button').hidden = true
     editedID = 0  
 }
@@ -83,12 +96,13 @@ function menuButtonClick(){
         setInnerText(`title${editedID}`,title)
         setInnerText(`content${editedID}`,content)
         // now update item in local storage
-        const itemObject = `title: ${title};content: ${content}`
-        localStorage.setItem(editedID,itemObject)
+        // const itemObject = `title: ${title};content: ${content}`
+        setItemToLocalstorage(editedID, title, content)
+        // localStorage.setItem(editedID,itemObject)
         // revert menu back to default state
         clearMenu()
         editMode = false
-        setInnerText('menu-button','Add')
+        setInnerText('apply-button','Add')
         document.getElementById('cancel-button').hidden = true
         editedID = 0
     }
@@ -141,7 +155,7 @@ function createItemButtonsElement(itemID){
         editMode = true
         editedID = itemID
         document.getElementById('cancel-button').hidden = false
-        setInnerText('menu-button','Apply')
+        setInnerText('apply-button','Apply')
         const title = getInnerText(`title${itemID}`)
         const content = getInnerText(`content${itemID}`)
         setValue('title-input',title)
@@ -151,7 +165,6 @@ function createItemButtonsElement(itemID){
     const deleteButtonElement = document.createElement('button')
     deleteButtonElement.innerText = 'delete'
     deleteButtonElement.className = 'item-delete-button'
-    deleteButtonElement.setAttribute('onclick',`deleteItem(${itemID})`)
     deleteButtonElement.onclick = function(){
         if(editMode){
             alert('cant delete while in edit mode')
@@ -162,7 +175,7 @@ function createItemButtonsElement(itemID){
         // remove from display
         list.removeChild(item)
         // remove from item storage
-        localStorage.removeItem(itemID)
+        removeItemFromLocalstorage(itemID)
     }
     // append the buttons to container
     itemButtonsElement.appendChild(editButtonElement)
@@ -195,23 +208,28 @@ window.onload = function(){
     // attach functions to menu buttons
     document.getElementById('menu').addEventListener('keyup', function(event) {
         if (event.keyCode === 13) {
-            document.getElementById('menu-button').click()
+            document.getElementById('apply-button').click()
             document.getElementById('title-input').focus()
         }
     })
     document.getElementById('clear-button').onclick = clearMenu
-    document.getElementById('menu-button').onclick = menuButtonClick
+    document.getElementById('apply-button').onclick = menuButtonClick
     document.getElementById('cancel-button').onclick = cancelEdit
     document.getElementById('add-button').onclick = addButton
+    // init todo list in storage
+    if(localStorage.getItem('TODO-List')==null){
+        const todoMap = JSON.stringify({})
+        localStorage.setItem('TODO-List',todoMap)
+    }
     // load and display todo items from local storage
+    const todoListString = localStorage.getItem('TODO-List')
+    const todoMap = JSON.parse(todoListString)
     const list = document.getElementById('list')
-    for (const key in localStorage) {
-        if(isNaN(Number(key)))
-            continue;
-        const itemString = localStorage.getItem(key).split(';')
-        const title = itemString[0].split(':')[1]
-        const content = itemString[1].split(':')[1]
-        const itemElement = createTodoItemElement(Number(key),title,content)
+    for (const key in todoMap) {
+        const item = todoMap[key]
+        const title = item['title']
+        const content = item['content']
+        const itemElement = createTodoItemElement(key,title,content)
         list.appendChild(itemElement)
     }
 }
