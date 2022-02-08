@@ -6,7 +6,6 @@ module.exports = {
     mode: 'development',
     entry:{
         main: path.resolve(__dirname,'src/index.js'),
-        // css: path.resolve(__dirname,'src/styles')
     },
     output:{
         path: path.resolve(__dirname,'dist'),
@@ -20,7 +19,6 @@ module.exports = {
         port: 5001,
         open: true,
         hot: true,
-        // watchContentBase: true
     },
     module:{
         rules:[
@@ -51,26 +49,8 @@ module.exports = {
         }),
         new CopyPlugin({
             patterns: [
-              { from: "**/*.css", to: "styles.css" },
+              { from: "**/*.css", to: path.resolve('dist','styles.css')},
             ],
           })
     ]
 }
-/*
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-module: {
-    rules: [
-        {
-            test: /\.css$/,
-            exclude: /node_modules/,
-            loader: ExtractTextPlugin.extract({
-                fallback: "style-loader",
-                use: "css-loader"
-            })
-        }
-    ]
-},
-plugins: [
-    new ExtractTextPlugin("styles.css")
-]
-*/

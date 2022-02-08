@@ -1,11 +1,12 @@
 let editedID = 0;
 let editMode = false;
+
 function getNewID(){
-    return Math.floor(Math.random()*1000)
+    return new Date().getTime().toString()
 }
 function addItem(){
-    let title = getValue('title-input')
-    if (title ==''){
+    const title = getValue('title-input')
+    if (title == ''){
         alert('cant add an item without a title')
         return
     }
@@ -13,32 +14,32 @@ function addItem(){
         alert('cant add an item while in edit mode')
         return
     }
-    let content = getValue('content-input')
-    let list = document.getElementById('list')
-    let id = getNewID()
-    let itemElement = createTodoItemElement(id,title,content)
+    const content = getValue('content-input')
+    const list = document.getElementById('list')
+    const id = getNewID()
+    const itemElement = createTodoItemElement(id,title,content)
 
     list.appendChild(itemElement)
     // now save to local storage
-    let itemString = `title: ${title};content: ${content}`
+    const itemString = `title: ${title};content: ${content}`
     localStorage.setItem(id,itemString)
 
     // reset menu display
     clearMenu()
-    setInnerText('menu-button','Add item')
+    setInnerText('menu-button','Add')
 }
 
 function sendItemToEdit(itemID){
     
     editedID = itemID
-    let title = getInnerText(`title${itemID}`)
-    let content = getInnerText(`content${itemID}`)
+    const title = getInnerText(`title${itemID}`)
+    const content = getInnerText(`content${itemID}`)
     setValue('title-input',title)
     setValue('content-input',content)
     
     editMode = true
     document.getElementById('cancel-button').hidden = false
-    setInnerText('menu-button','Add changes')
+    setInnerText('menu-button','Apply')
 }
 
 function deleteItem(itemID){
@@ -46,8 +47,8 @@ function deleteItem(itemID){
         alert('cant delete while in edit mode')
         return
     }
-    let item = document.getElementById(itemID)
-    let list = document.getElementById('list')
+    const item = document.getElementById(itemID)
+    const list = document.getElementById('list')
     // remove from display
     list.removeChild(item)
     // remove from item storage
@@ -57,7 +58,7 @@ function deleteItem(itemID){
 function cancelEdit(){
     clearMenu()
     editMode = false
-    setInnerText('menu-button','Add item')
+    setInnerText('menu-button','Add')
     document.getElementById('cancel-button').hidden = true
     editedID = 0  
 }
@@ -69,24 +70,25 @@ function clearMenu(){
 
 function menuButtonClick(){
     if(!editMode){
+        // adding a new item
         addItem()
     }else{
+        // editing an existing item
         if (getValue('title-input')==''){
             alert('cant set an empty title')
             return
         }
-        let title = getValue('title-input')
-        let content = getValue('content-input')
+        const title = getValue('title-input')
+        const content = getValue('content-input')
         setInnerText(`title${editedID}`,title)
         setInnerText(`content${editedID}`,content)
         // now update item in local storage
-        let itemObject = `title: ${title};content: ${content}`
+        const itemObject = `title: ${title};content: ${content}`
         localStorage.setItem(editedID,itemObject)
-
+        // revert menu back to default state
         clearMenu()
         editMode = false
-        // document.getElementById('menu-button').innerText = 'Add item'
-        setInnerText('menu-button','Add item')
+        setInnerText('menu-button','Add')
         document.getElementById('cancel-button').hidden = true
         editedID = 0
     }
@@ -108,19 +110,18 @@ function setInnerText(id,text){
     document.getElementById(id).innerText = text
 }
 function createTodoItemElement(itemID,title,content){
-
     // ol todo-item
-    let itemElement = document.createElement('ol')
+    const itemElement = document.createElement('ol')
     itemElement.className = 'todo-item'
     itemElement.id = itemID;
     // input checkbox
-    let itemCheckboxElement = document.createElement('input')
+    const itemCheckboxElement = document.createElement('input')
     itemCheckboxElement.type = 'checkbox'
     itemCheckboxElement.className = 'item-checkbox'
     // div todo-item-text
-    let itemTextElement = createItemTextElement(itemID,title,content)
-    let itemButtonsElement = createItemButtonsElement(itemID)
-    //append checkbox, text and buttons to list-item
+    const itemTextElement = createItemTextElement(itemID,title,content)
+    const itemButtonsElement = createItemButtonsElement(itemID)
+    // append checkbox, text and buttons to list-item
     itemElement.appendChild(itemCheckboxElement)
     itemElement.appendChild(itemTextElement)
     itemElement.appendChild(itemButtonsElement)
@@ -129,31 +130,40 @@ function createTodoItemElement(itemID,title,content){
 }
 function createItemButtonsElement(itemID){
 
-    let itemButtonsElement = document.createElement('div')
+    const itemButtonsElement = document.createElement('div')
     itemButtonsElement.className = 'todo-item-buttons'
     // button edit
-    let editButtonElement = document.createElement('button')
+    const editButtonElement = document.createElement('button')
     editButtonElement.innerText = 'edit'
     editButtonElement.className = 'item-edit-button'
-    // editButtonElement.setAttribute('onclick',`sendItemToEdit(${itemID})`)
     editButtonElement.onclick = function(){
-
+        // set menu to editing state
+        editMode = true
         editedID = itemID
-        let title = getInnerText(`title${itemID}`)
-        let content = getInnerText(`content${itemID}`)
+        document.getElementById('cancel-button').hidden = false
+        setInnerText('menu-button','Apply')
+        const title = getInnerText(`title${itemID}`)
+        const content = getInnerText(`content${itemID}`)
         setValue('title-input',title)
         setValue('content-input',content)
-        
-        editMode = true
-        document.getElementById('cancel-button').hidden = false
-        setInnerText('menu-button','Add changes')
     }
     // button delete
-    let deleteButtonElement = document.createElement('button')
+    const deleteButtonElement = document.createElement('button')
     deleteButtonElement.innerText = 'delete'
     deleteButtonElement.className = 'item-delete-button'
     deleteButtonElement.setAttribute('onclick',`deleteItem(${itemID})`)
-
+    deleteButtonElement.onclick = function(){
+        if(editMode){
+            alert('cant delete while in edit mode')
+            return
+        }
+        const item = document.getElementById(itemID)
+        const list = document.getElementById('list')
+        // remove from display
+        list.removeChild(item)
+        // remove from item storage
+        localStorage.removeItem(itemID)
+    }
     // append the buttons to container
     itemButtonsElement.appendChild(editButtonElement)
     itemButtonsElement.appendChild(deleteButtonElement)
@@ -162,15 +172,15 @@ function createItemButtonsElement(itemID){
 }
 function createItemTextElement(itemID,title,content){
 
-    let itemTextElement = document.createElement('div')
+    const itemTextElement = document.createElement('div')
     itemTextElement.className = 'todo-item-text'
     // item title
-    let titleElement = document.createElement('div')
+    const titleElement = document.createElement('div')
     titleElement.innerText = title
     titleElement.className = 'todo-item-title'
     titleElement.id = 'title'+itemID
     // item content
-    let contentElement = document.createElement('div')
+    const contentElement = document.createElement('div')
     contentElement.innerText = content
     contentElement.className = 'todo-item-content'
     contentElement.id = 'content'+itemID
@@ -180,29 +190,28 @@ function createItemTextElement(itemID,title,content){
 
     return itemTextElement
 }
-    // attach functions to menu buttons
-    window.onload = function(){
-        // document.getElementById('clear-button').setAttribute('onclick','clearMenu()')
-        // document.getElementById('menu-button').setAttribute('onclick','menuButtonClick()')
-        // document.getElementById('cancel-button').setAttribute('onclick','cancelEdit()')
-        // document.getElementById('add-button').setAttribute('onclick','addButton()')
-        document.getElementById('clear-button').onclick = clearMenu
-        document.getElementById('menu-button').onclick = menuButtonClick
-        document.getElementById('cancel-button').onclick = cancelEdit
-        document.getElementById('add-button').onclick = addButton
-        // load display todo items from local storage
-        let list = document.getElementById('list')
-        for (let key in localStorage) {
-            if(isNaN(Number(key)))
-                continue;
-            let itemString = localStorage.getItem(key)
-            itemString = itemString.split(';')
-            let title = itemString[0].split(':')[1]
-            let content = itemString[1].split(':')[1]
-            let itemElement = createTodoItemElement(Number(key),title,content)
-            list.appendChild(itemElement)
-        }
-    }
 
-// (function() {
-// })();
+window.onload = function(){
+    // attach functions to menu buttons
+    document.getElementById('menu').addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+            document.getElementById('menu-button').click()
+            document.getElementById('title-input').focus()
+        }
+    })
+    document.getElementById('clear-button').onclick = clearMenu
+    document.getElementById('menu-button').onclick = menuButtonClick
+    document.getElementById('cancel-button').onclick = cancelEdit
+    document.getElementById('add-button').onclick = addButton
+    // load and display todo items from local storage
+    const list = document.getElementById('list')
+    for (const key in localStorage) {
+        if(isNaN(Number(key)))
+            continue;
+        const itemString = localStorage.getItem(key).split(';')
+        const title = itemString[0].split(':')[1]
+        const content = itemString[1].split(':')[1]
+        const itemElement = createTodoItemElement(Number(key),title,content)
+        list.appendChild(itemElement)
+    }
+}

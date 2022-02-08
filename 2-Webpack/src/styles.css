@@ -4,6 +4,7 @@ button{
     background-color: white;
     border-radius: 10px;
     height:40px;
+    min-width: 25%;
     margin: 5px  
 }
 button:hover{
@@ -75,14 +76,10 @@ input:hover{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-bottom: 12px;
 }
-
 .item-checkbox{
     margin-right: 10px;
 }
 .item-checkbox:checked ~div.todo-item-text > .todo-item-title {
-    text-decoration: line-through;
-}
-.item-checkbox:checked ~div.todo-item-text > .todo-item-subtitle {
     text-decoration: line-through;
 }
 .item-checkbox:checked ~div.todo-item-text > .todo-item-content {
@@ -134,12 +131,6 @@ input:hover{
 .todo-item-title{
     font-size: 20px;
     font-weight: bold;
-}
-.todo-item-subtitle{
-    font-size: 20px;
-    color: grey;
-    font-weight: thin;
-    padding-left: 15px;
 }
 .todo-item-content{
     font-weight: thin;
