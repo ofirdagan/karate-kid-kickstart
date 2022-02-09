@@ -107,6 +107,8 @@
   function editElementTitle(taskInfo) {
     const task = document.getElementById(taskInfo.id);
     const taskTitle = task.querySelector("#task-title");
+    const taskCheckBox=task.querySelector("#task-checkbox");
+    taskCheckBox.disabled=true;
     const taskNewTitle = createHtmlElement("input", ["task-new-title-input"]);
     taskNewTitle.id = "task-input-field";
     taskNewTitle.value = taskInfo.title;
@@ -120,10 +122,10 @@
   }
   function setElementTitle(taskInfo) {
     const task = document.getElementById(taskInfo.id);
-    console.log(task);
     const taskInputField = task.querySelector("#task-input-field");
-    console.log(taskInputField);
     const newTitle = createHtmlElement("h3", ["to-do-task-title"]);
+    const taskCheckBox=task.querySelector("#task-checkbox");
+    taskCheckBox.disabled=false;
     newTitle.id = "task-title";
     newTitle.textContent = taskInputField.value;
     taskInfo.title = newTitle.textContent;
