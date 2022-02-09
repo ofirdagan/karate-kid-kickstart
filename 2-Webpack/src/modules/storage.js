@@ -39,7 +39,7 @@ function getItemFromLocalstorage(id){
 function clearItemsFromItemList(){
     localStorage.setItem(TODOList,{})
 }
-function clearItemListFromStorage(){
+function clearTODOListFromStorage(){
     localStorage.removeItem(TODOList)
 }
 module.exports ={
@@ -48,5 +48,5 @@ module.exports ={
     'getAll':getAllItemsFromStorage,
     'remove':removeItemFromLocalstorage,
     'clear': clearItemsFromItemList,
-    'clearStorage':clearItemListFromStorage
+    'clearStorage':clearTODOListFromStorage
 }

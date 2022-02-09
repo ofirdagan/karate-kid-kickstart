@@ -39,6 +39,9 @@ input:hover{
     padding: 10px;
     border-right: solid 2px grey;
 }
+.menu:hover{
+    background-color: rgb(218, 209, 209); 
+}
 .menu-buttons{
     display: flex;
     justify-content: space-around;
@@ -78,6 +81,7 @@ input:hover{
     border-radius: 10px; 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-bottom: 12px;
+    background-color: white;
 }
 .todo-item:hover{
     background-color: whitesmoke;
@@ -88,8 +92,11 @@ input:hover{
 .item-checkbox:checked ~div.todo-item-text > .todo-item-title {
     text-decoration: line-through;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-content {
-    display: none;
+.item-checkbox:checked ~div.todo-item-text > .todo-item-content{
+    visibility: hidden;
+}
+.item-checkbox:checked ~div.todo-item-buttons > .item-edit-button {
+    visibility: hidden;
 }
 .todo-item-text{
     display: flex; 
@@ -111,6 +118,8 @@ input:hover{
     height:40px;
     border-radius: 30%;
     background-color: greenyellow;
+    opacity: 1;
+    animation: fade 2s linear;
 }
 .item-edit-button:hover{
     background-color: seagreen;  

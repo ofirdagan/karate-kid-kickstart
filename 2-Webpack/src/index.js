@@ -1,4 +1,6 @@
-const storage = require('./storage.js')
+const storage = require('./modules/storage.js')
+const {getValue,setValue,getInnerText,setInnerText} = require('./modules/helper-functions.js')
+
 let editedID = 0;
 let editMode = false;
 
@@ -25,7 +27,19 @@ function addItem(){
     clearMenu()
     setInnerText('apply-button','Add')
 }
-
+function deleteCheckedItems(){
+    const itemList = storage.getAll()
+    const list = document.getElementById('list')
+    for (const id in itemList) {
+        const checkbox = document.getElementById(`item-checkbox${id}`)
+        if(checkbox.checked){
+            console.log(id, 'is checked')
+            const itemElement = document.getElementById(`${id}`)
+            list.removeChild(itemElement)
+            storage.remove(id)
+        }
+    }
+}
 function cancelEdit(){
     clearMenu()
     editMode = false
@@ -65,18 +79,7 @@ function addButton(){
     clearMenu()
     document.getElementById('title-input').focus()
 }
-function getValue(id){
-    return document.getElementById(id).value
-}
-function setValue(id,value){
-    document.getElementById(id).value = value
-}
-function getInnerText(id){
-    return document.getElementById(id).innerText
-}
-function setInnerText(id,text){
-    document.getElementById(id).innerText = text
-}
+
 function createTodoItemElement(itemID,title,content){
     // ol todo-item
     const itemElement = document.createElement('ol')
@@ -86,6 +89,7 @@ function createTodoItemElement(itemID,title,content){
     const itemCheckboxElement = document.createElement('input')
     itemCheckboxElement.type = 'checkbox'
     itemCheckboxElement.className = 'item-checkbox'
+    itemCheckboxElement.id = `item-checkbox${itemID}`
     // div todo-item-text
     const itemTextElement = createItemTextElement(itemID,title,content)
     const itemButtonsElement = createItemButtonsElement(itemID)
@@ -157,7 +161,17 @@ function createItemTextElement(itemID,title,content){
 
     return itemTextElement
 }
-
+function showItemsFromLocalStorage(){
+    const todoMap = storage.getAll()
+    const list = document.getElementById('list')
+    for (const key in todoMap) {
+        const item = todoMap[key]
+        const title = item['title']
+        const content = item['content']
+        const itemElement = createTodoItemElement(key,title,content)
+        list.appendChild(itemElement)
+    }
+}
 window.onload = function(){
     // attach functions to menu buttons
     document.getElementById('menu').addEventListener('keyup', function(event) {
@@ -170,14 +184,7 @@ window.onload = function(){
     document.getElementById('apply-button').onclick = menuButtonClick
     document.getElementById('cancel-button').onclick = cancelEdit
     document.getElementById('add-button').onclick = addButton
-
-    const todoMap = storage.getAll()
-    const list = document.getElementById('list')
-    for (const key in todoMap) {
-        const item = todoMap[key]
-        const title = item['title']
-        const content = item['content']
-        const itemElement = createTodoItemElement(key,title,content)
-        list.appendChild(itemElement)
-    }
+    document.getElementById('clean-button').onclick = deleteCheckedItems
+    
+    showItemsFromLocalStorage()
 }
