@@ -1,9 +1,11 @@
 (function () {
   let idSerializer = 0;
-  createAddButton();
+  createAddTaskContainer();
 
-  function createAddButton() {
+  function createAddTaskContainer() {
     const buttonContainer = document.getElementById("add-button-container");
+    const toDoTaskInput = document.getElementById("task-title-input");
+    toDoTaskInput.addEventListener("change", () => addNewTask());
     const addButton = createButtonElement(
       ["button-style"],
       "click",
@@ -12,30 +14,30 @@
     addButton.textContent = "add";
     buttonContainer.appendChild(addButton);
   }
-  function createButtonElements(taskId) {
+  function createButtonElements(taskInfo) {
     const buttonsWrapper = createHtmlElement("div", ["buttons-wrapper"]);
-    const editButtonElement = createEditButton(taskId);
-    const deleteButtonElement = createDeleteButton(taskId);
+    const editButtonElement = createEditButton(taskInfo);
+    const deleteButtonElement = createDeleteButton(taskInfo);
     buttonsWrapper.appendChild(editButtonElement);
     buttonsWrapper.appendChild(deleteButtonElement);
     return buttonsWrapper;
   }
-  function createEditButton(taskId) {
+  function createEditButton(taskInfo) {
     const editButtonElement = createButtonElement(
       ["edit-task-info", "button-style"],
       "click",
       editElementButtonHandler,
-      taskId
+      taskInfo
     );
     editButtonElement.textContent = "edit";
     return editButtonElement;
   }
-  function createDeleteButton(taskId) {
+  function createDeleteButton(taskInfo) {
     const deleteButtonElement = createButtonElement(
       ["delete-task", "button-style"],
       "click",
       deleteElementButtonHandler,
-      taskId
+      taskInfo.id
     );
     deleteButtonElement.textContent = "delete";
     return deleteButtonElement;
@@ -49,23 +51,29 @@
   }
 
   function createTask(title) {
-    const taskId = getNewTaskId();
+    const taskInfo = {
+      title: title,
+      isEditMode: false,
+      isDone: false,
+      id: getNewTaskId(),
+    };
     const toDoTaskElement = createHtmlElement("li", ["to-do-tasks"]);
-    toDoTaskElement.id = taskId;
-    const checkBoxElement = createCheckBoxElement(taskId);
+    toDoTaskElement.id = taskInfo.id;
+    const checkBoxElement = createTaskCheckBoxElement(taskInfo);
     toDoTaskElement.appendChild(checkBoxElement);
-    const taskInfoElement = createTaskInfoElement(title);
+    const taskInfoElement = createTaskInfoElement(taskInfo.title);
     toDoTaskElement.appendChild(taskInfoElement);
-    const buttonsWrapper = createButtonElements(taskId);
+    const buttonsWrapper = createButtonElements(taskInfo);
     toDoTaskElement.appendChild(buttonsWrapper);
     let ulElement = document.getElementById("to-do-list-container");
     ulElement.appendChild(toDoTaskElement);
   }
-  function createCheckBoxElement(taskId) {
+  function createTaskCheckBoxElement(taskInfo) {
     const checkBoxElement = createHtmlElement("input", ["to-do-task-checkbox"]);
     checkBoxElement.type = "checkbox";
-    checkBoxElement.addEventListener("click", () => {
-      markTaskAsDone(taskId);
+    checkBoxElement.id="task-checkbox";
+    checkBoxElement.addEventListener("click", (e) => {
+      markTaskAsDone(e,taskInfo);
     });
     return checkBoxElement;
   }
@@ -81,35 +89,78 @@
     return idSerializer.toString();
   }
 
-  function deleteElementButtonHandler(event,id) {
+  function deleteElementButtonHandler(event, id) {
     const task = document.getElementById(id);
     task.remove();
   }
 
-  function editElementButtonHandler(id) {
-    let task = document.getElementById(id);
-    let newInput = document.getElementById("task-title-input");
-    let taskTitle = task.querySelector("#task-title");
-    taskTitle.textContent = newInput.value;
+  function editElementButtonHandler(event, taskInfo) {
+    console.log(taskInfo.isEditMode);
+    if (!taskInfo.isEditMode) {
+      editElementTitle(taskInfo);
+      taskInfo.isEditMode = true;
+    } else {
+      setElementTitle(taskInfo);
+      taskInfo.isEditMode = false;
+    }
   }
-  function createButtonElement(className, eventType, callBack = () => {}, ...args) {
-    let buttonElement = createHtmlElement("button", className);
+  function editElementTitle(taskInfo) {
+    const task = document.getElementById(taskInfo.id);
+    const taskTitle = task.querySelector("#task-title");
+    const taskNewTitle = createHtmlElement("input", ["task-new-title-input"]);
+    taskNewTitle.id = "task-input-field";
+    taskNewTitle.value = taskInfo.title;
+    task.replaceChild(taskNewTitle, taskTitle);
+    taskNewTitle.addEventListener("keydown", (e) => {
+      if (e.code == "Enter") {
+        setElementTitle(taskInfo);
+        taskInfo.isEditMode = false;
+      }
+    });
+  }
+  function setElementTitle(taskInfo) {
+    const task = document.getElementById(taskInfo.id);
+    console.log(task);
+    const taskInputField = task.querySelector("#task-input-field");
+    console.log(taskInputField);
+    const newTitle = createHtmlElement("h3", ["to-do-task-title"]);
+    newTitle.id = "task-title";
+    newTitle.textContent = taskInputField.value;
+    taskInfo.title = newTitle.textContent;
+    task.replaceChild(newTitle, taskInputField);
+  }
+
+  function createButtonElement(
+    className,
+    eventType,
+    callBack = () => {},
+    ...args
+  ) {
+    const buttonElement = createHtmlElement("button", className);
     buttonElement.addEventListener(eventType, (event) => {
-      callBack(event,...args);
-    
+      callBack(event, ...args);
     });
     return buttonElement;
   }
-  function markTaskAsDone(event,taskId) {
-    let task = document.getElementById(taskId);
-    let title = task.querySelector("#task-title");
-    title.classList.add("done-task");
+  function markTaskAsDone(event, taskInfo) {
+    const task = document.getElementById(taskInfo.id);
+    const taskCheck=task.querySelector("#task-checkbox");
+    const title = task.querySelector("#task-title");
+    if (taskCheck.checked) {
+      title.classList.add("done-task");
+      taskInfo.isDone=true;
+    } else {
+      title.classList.remove("done-task");
+      taskInfo.isDone=false;
+    }
   }
 
   function addNewTask(ev) {
-    const taskTitle = document.getElementById("task-title-input").value;
-    createTask(taskTitle);
+    const taskTitleInput = document.getElementById("task-title-input");
+    const taskTitle = taskTitleInput.value;
+    if (taskTitle) {
+      createTask(taskTitle);
+      taskTitleInput.value = "";
+    }
   }
-
 })();
-
