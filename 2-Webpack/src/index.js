@@ -1,3 +1,4 @@
+const storage = require('./storage.js')
 let editedID = 0;
 let editMode = false;
 
@@ -17,55 +18,12 @@ function addItem(){
     const content = getValue('content-input')
     const list = document.getElementById('list')
     const id = getNewID()
-    setItemToLocalstorage(id, title,content)
+    storage.set(id, title,content)
     const itemElement = createTodoItemElement(id,title,content)
     list.appendChild(itemElement)
     // reset menu display
     clearMenu()
     setInnerText('apply-button','Add')
-}
-function setItemToLocalstorage(id, title, content){
-    const item = {
-        "title": title,
-        "content": content
-    }
-    const todoListString = localStorage.getItem('TODO-List')
-    const todoMap = JSON.parse(todoListString)
-    //inset item to todo map
-    todoMap[id]=item
-    localStorage.setItem('TODO-List',JSON.stringify(todoMap))
-}
-function removeItemFromLocalstorage(id){
-    const todoListString = localStorage.getItem('TODO-List')
-    const todoMap = JSON.parse(todoListString)
-    //inset item to todo map
-    delete todoMap[id]
-    localStorage.setItem('TODO-List',JSON.stringify(todoMap))
-}
-function sendItemToEdit(itemID){
-    
-    editedID = itemID
-    const title = getInnerText(`title${itemID}`)
-    const content = getInnerText(`content${itemID}`)
-    setValue('title-input',title)
-    setValue('content-input',content)
-    
-    editMode = true
-    document.getElementById('cancel-button').hidden = false
-    setInnerText('apply-button','Apply')
-}
-
-function deleteItem(itemID){
-    if(editMode){
-        alert('cant delete while in edit mode')
-        return
-    }
-    const item = document.getElementById(itemID)
-    const list = document.getElementById('list')
-    // remove from display
-    list.removeChild(item)
-    // remove from item storage
-    localStorage.removeItem(itemID)
 }
 
 function cancelEdit(){
@@ -95,11 +53,7 @@ function menuButtonClick(){
         const content = getValue('content-input')
         setInnerText(`title${editedID}`,title)
         setInnerText(`content${editedID}`,content)
-        // now update item in local storage
-        // const itemObject = `title: ${title};content: ${content}`
-        setItemToLocalstorage(editedID, title, content)
-        // localStorage.setItem(editedID,itemObject)
-        // revert menu back to default state
+        storage.set(editedID, title, content)
         clearMenu()
         editMode = false
         setInnerText('apply-button','Add')
@@ -175,7 +129,7 @@ function createItemButtonsElement(itemID){
         // remove from display
         list.removeChild(item)
         // remove from item storage
-        removeItemFromLocalstorage(itemID)
+        storage.remove(itemID)
     }
     // append the buttons to container
     itemButtonsElement.appendChild(editButtonElement)
@@ -216,14 +170,8 @@ window.onload = function(){
     document.getElementById('apply-button').onclick = menuButtonClick
     document.getElementById('cancel-button').onclick = cancelEdit
     document.getElementById('add-button').onclick = addButton
-    // init todo list in storage
-    if(localStorage.getItem('TODO-List')==null){
-        const todoMap = JSON.stringify({})
-        localStorage.setItem('TODO-List',todoMap)
-    }
-    // load and display todo items from local storage
-    const todoListString = localStorage.getItem('TODO-List')
-    const todoMap = JSON.parse(todoListString)
+
+    const todoMap = storage.getAll()
     const list = document.getElementById('list')
     for (const key in todoMap) {
         const item = todoMap[key]
