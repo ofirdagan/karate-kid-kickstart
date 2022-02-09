@@ -58,7 +58,7 @@
     toDoTaskElement.appendChild(taskInfoElement);
     const buttonsWrapper = createButtonElements(taskId);
     toDoTaskElement.appendChild(buttonsWrapper);
-    let ulElement = document.getElementById("ul");
+    let ulElement = document.getElementById("to-do-list-container");
     ulElement.appendChild(toDoTaskElement);
   }
   function createCheckBoxElement(taskId) {
@@ -76,12 +76,12 @@
     return htmlElement;
   }
 
-  function getNewTaskId() {
+  function getNewTaskId(ev) {
     idSerializer++;
     return idSerializer.toString();
   }
 
-  function deleteElementButtonHandler(id) {
+  function deleteElementButtonHandler(event,id) {
     const task = document.getElementById(id);
     task.remove();
   }
@@ -92,21 +92,24 @@
     let taskTitle = task.querySelector("#task-title");
     taskTitle.textContent = newInput.value;
   }
-  function createButtonElement(className, eventType, callBack = () => {}, params = "") {
+  function createButtonElement(className, eventType, callBack = () => {}, ...args) {
     let buttonElement = createHtmlElement("button", className);
-    buttonElement.addEventListener(eventType, () => {
-      callBack(params);
+    buttonElement.addEventListener(eventType, (event) => {
+      callBack(event,...args);
+    
     });
     return buttonElement;
   }
-  function markTaskAsDone(taskId) {
+  function markTaskAsDone(event,taskId) {
     let task = document.getElementById(taskId);
     let title = task.querySelector("#task-title");
     title.classList.add("done-task");
   }
 
-  function addNewTask() {
+  function addNewTask(ev) {
     const taskTitle = document.getElementById("task-title-input").value;
     createTask(taskTitle);
   }
+
 })();
+
