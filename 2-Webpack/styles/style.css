@@ -97,6 +97,10 @@ input[type="text"].edit  {
     cursor: pointer;
 }
 
+.btn.disabled {
+    cursor: not-allowed;
+}
+
 #add-btn {
     background: var(--logo-blue);
     color: var(--background-blue);
@@ -132,7 +136,7 @@ input[type="text"].edit  {
     border-radius: 10px 0px 0px 10px;
 }
 
-.check-btn:hover {
+.check-btn:not(.disabled):hover {
     color: var(--dark-gray);
     background: var(--dark-gray);
 }
@@ -142,7 +146,7 @@ input[type="text"].edit  {
     background: var(--light-gray);
 }
 
-.check-btn.checked:hover {
+.check-btn.checked:not(.disabled):hover {
     color: var(--light-gray);
     background: var(--dark-gray);
 }
@@ -152,7 +156,7 @@ input[type="text"].edit  {
     border-radius: 0px 10px 10px 0px;
 }
 
-.remove-btn:hover {
+.remove-btn:not(.disabled):hover {
     color: var(--dark-red);
     background: var(--light-red);
 }
