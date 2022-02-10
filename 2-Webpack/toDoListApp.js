@@ -1,7 +1,11 @@
 
 (function () {
+ 
   let idSerializer = 0;
   createAddTaskContainer();
+  if (localStorage){
+    restoreTasksFromStorage();
+  }
 
   function createAddTaskContainer() {
     const buttonContainer = document.getElementById("add-button-container");
@@ -66,8 +70,10 @@
     toDoTaskElement.appendChild(taskInfoElement);
     const buttonsWrapper = createButtonElements(taskInfo);
     toDoTaskElement.appendChild(buttonsWrapper);
+    localStorage.setItem(`${taskInfo.id}`,JSON.stringify(taskInfo));
     let ulElement = document.getElementById("to-do-list-container");
     ulElement.appendChild(toDoTaskElement);
+    
   }
   function createTaskCheckBoxElement(taskInfo) {
     const checkBoxElement = createHtmlElement("input", ["to-do-task-checkbox"]);
@@ -93,6 +99,7 @@
   function deleteElementButtonHandler(event, id) {
     const task = document.getElementById(id);
     task.remove();
+    localStorage.removeItem(`${id}`)
   }
 
   function editElementButtonHandler(event, taskInfo) {
@@ -131,6 +138,7 @@
     newTitle.textContent = taskInputField.value;
     taskInfo.title = newTitle.textContent;
     task.replaceChild(newTitle, taskInputField);
+    localStorage.setItem(`${taskInfo.id}`,JSON.stringify(taskInfo));
   }
 
   function createButtonElement(
@@ -165,5 +173,8 @@
       createTask(taskTitle);
       taskTitleInput.value = "";
     }
+  }
+  function restoreTasksFromStorage(){
+      Object.values(localStorage).forEach(taskInfo =>{createTask(JSON.parse(taskInfo).title)})
   }
 })();
