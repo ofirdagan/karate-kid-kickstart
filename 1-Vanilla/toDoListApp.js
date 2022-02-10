@@ -71,9 +71,9 @@
   function createTaskCheckBoxElement(taskInfo) {
     const checkBoxElement = createHtmlElement("input", ["to-do-task-checkbox"]);
     checkBoxElement.type = "checkbox";
-    checkBoxElement.id="task-checkbox";
+    checkBoxElement.id = "task-checkbox";
     checkBoxElement.addEventListener("click", (e) => {
-      markTaskAsDone(e,taskInfo);
+      markTaskAsDone(e, taskInfo);
     });
     return checkBoxElement;
   }
@@ -107,8 +107,8 @@
   function editElementTitle(taskInfo) {
     const task = document.getElementById(taskInfo.id);
     const taskTitle = task.querySelector("#task-title");
-    const taskCheckBox=task.querySelector("#task-checkbox");
-    taskCheckBox.disabled=true;
+    const taskCheckBox = task.querySelector("#task-checkbox");
+    taskCheckBox.disabled = true;
     const taskNewTitle = createHtmlElement("input", ["task-new-title-input"]);
     taskNewTitle.id = "task-input-field";
     taskNewTitle.value = taskInfo.title;
@@ -124,8 +124,8 @@
     const task = document.getElementById(taskInfo.id);
     const taskInputField = task.querySelector("#task-input-field");
     const newTitle = createHtmlElement("h3", ["to-do-task-title"]);
-    const taskCheckBox=task.querySelector("#task-checkbox");
-    taskCheckBox.disabled=false;
+    const taskCheckBox = task.querySelector("#task-checkbox");
+    taskCheckBox.disabled = false;
     newTitle.id = "task-title";
     newTitle.textContent = taskInputField.value;
     taskInfo.title = newTitle.textContent;
@@ -146,14 +146,14 @@
   }
   function markTaskAsDone(event, taskInfo) {
     const task = document.getElementById(taskInfo.id);
-    const taskCheck=task.querySelector("#task-checkbox");
+    const taskCheck = task.querySelector("#task-checkbox");
     const title = task.querySelector("#task-title");
     if (taskCheck.checked) {
       title.classList.add("done-task");
-      taskInfo.isDone=true;
+      taskInfo.isDone = true;
     } else {
       title.classList.remove("done-task");
-      taskInfo.isDone=false;
+      taskInfo.isDone = false;
     }
   }
 
