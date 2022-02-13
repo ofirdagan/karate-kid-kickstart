@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+    devtool: 'eval-source-map',
     mode: 'development',
     entry:{
         main: path.resolve(__dirname,'src/index.js'),
@@ -49,7 +50,7 @@ module.exports = {
         }),
         new CopyPlugin({
             patterns: [
-              { from: "src/styles/*.css", to: path.resolve(__dirname,'dist/styles.css')},
+              { from: "src/styles/*.css", to: path.resolve(__dirname,'dist/[name].css')},
             ],
           })
     ]
