@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { classes } from "./js-styles/style";
 import { LocalStorage } from "./utils/localstorage";
 
 (function () {
@@ -37,15 +38,15 @@ import { LocalStorage } from "./utils/localstorage";
   }
 
   const swapDOMComponents = (elem, curr, modifiedElem) => {
-    elem.querySelector(".list-item-text").replaceChild(curr, modifiedElem);
+    elem.querySelector(`.${classes.listItemText}`).replaceChild(curr, modifiedElem);
   };
 
   const createTodoItem = (item, todoListItem) => {
     const todoItem = document.createElement("span");
     todoItem.innerText = document.getElementById(`${item.id}-editTodo`).value;
-    todoItem.classList.add("todo-text");
+    todoItem.classList.add(classes.todoText);
     if (item.isFinished) {
-      todoItem.classList.add("finished-todo");
+      todoItem.classList.add(classes.finishedTodo);
       todoListItem.firstChild.checked = true;
     }
     return todoItem;
@@ -55,7 +56,7 @@ import { LocalStorage } from "./utils/localstorage";
     const inputText = document.createElement("input");
     inputText.type = "text";
     inputText.value = elemToChange.innerText;
-    inputText.classList.add("todo-text", "edit-todo");
+    inputText.classList.add(classes.todoText, classes.editTodo);
     inputText.id = `${item.id}-editTodo`;
     return inputText;
   };
@@ -63,7 +64,8 @@ import { LocalStorage } from "./utils/localstorage";
   const editTodo = (item) => {
     const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => element.id === item.id);
-    const elemToChange = todoListItem.querySelector(`.todo-text`);
+    const elemToChange = todoListItem.querySelector(`.${classes.todoText}`);
+    console.log(elemToChange);
     if (isFound) {
       removeElement(editModeItems, item);
       const todoItem = createTodoItem(item, todoListItem);
@@ -83,12 +85,12 @@ import { LocalStorage } from "./utils/localstorage";
     const todoListItem = document.getElementById(item.id);
     const todoDescription = todoListItem.firstChild.children[1];
     if (item.isFinished) {
-      todoDescription.classList.remove("finished-todo");
-      todoDescription.classList.add("unfinished-todo");
+      todoDescription.classList.remove(classes.finishedTodo);
+      todoDescription.classList.add(classes.unfinishedTodo);
       item.isFinished = false;
     } else {
-      todoDescription.classList.remove("unfinished-todo");
-      todoDescription.classList.add("finished-todo");
+      todoDescription.classList.remove(classes.unfinishedTodo);
+      todoDescription.classList.add(classes.finishedTodo);
       item.isFinished = true;
     }
     LS.editTodo(item, item.id);
@@ -107,15 +109,15 @@ import { LocalStorage } from "./utils/localstorage";
 
   const createSwitchElem = (cb) => {
     const switchElem = document.createElement("label");
-    switchElem.classList.add("switch");
+    switchElem.classList.add('switch');
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.onclick = cb;
 
     const slider = document.createElement("span");
-    slider.classList.add("slider");
-    slider.classList.add("round");
+    slider.classList.add('slider');
+    slider.classList.add('round');
 
     switchElem.appendChild(checkbox);
     switchElem.appendChild(slider);
@@ -125,9 +127,9 @@ import { LocalStorage } from "./utils/localstorage";
   const createTextItem = (item, switchElem) => {
     const todoDescription = document.createElement("span");
     todoDescription.innerText = item.text;
-    todoDescription.classList.add("todo-text");
+    todoDescription.classList.add(classes.todoText);
     if (item.isFinished) {
-      todoDescription.classList.add("finished-todo");
+      todoDescription.classList.add(classes.finishedTodo);
       switchElem.firstChild.checked = true;
     }
     return todoDescription;
@@ -135,7 +137,7 @@ import { LocalStorage } from "./utils/localstorage";
 
   const createListItem = (item) => {
     const listItemContainer = document.createElement("div");
-    listItemContainer.classList.add("list-item-text");
+    listItemContainer.classList.add(classes.listItemText);
     const switchElem = createSwitchElem(() => toggleTodo(item));
     listItemContainer.appendChild(switchElem);
     listItemContainer.appendChild(createTextItem(item, switchElem));
@@ -148,12 +150,12 @@ import { LocalStorage } from "./utils/localstorage";
     const listItem = createListItem(item);
 
     const itemActions = document.createElement("span");
-    itemActions.classList.add("list-item-actions");
+    itemActions.classList.add(classes.listItemActions);
     itemActions.appendChild(
-      createButton(() => removeTodo(item), "fa fa-trash", "button")
+      createButton(() => removeTodo(item), "fa fa-trash", classes.button)
     );
     itemActions.appendChild(
-      createButton(() => editTodo(item), "fa fa-pencil", "edit")
+      createButton(() => editTodo(item), "fa fa-pencil", classes.edit)
     );
 
     todoListItemContainer.appendChild(listItem);
