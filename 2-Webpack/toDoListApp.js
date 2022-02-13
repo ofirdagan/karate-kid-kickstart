@@ -1,6 +1,5 @@
 
 (function () {
- 
   let idSerializer = 0;
   createAddTaskContainer();
   if (localStorage){
