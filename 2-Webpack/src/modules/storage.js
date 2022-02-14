@@ -30,10 +30,8 @@ function getAllItemsFromStorage(){
     return JSON.parse(localStorage.getItem(TODOList))
 }
 function getItemFromLocalstorage(id){
-    start()
-    const todoListString = localStorage.getItem(TODOList)
-    const todoMap = JSON.parse(todoListString)
-    return todoMap[key]
+    const todoMap = getAllItemsFromStorage()
+    return todoMap[id]
 }
 
 module.exports ={

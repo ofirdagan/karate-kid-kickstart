@@ -3,17 +3,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry:{
         main: path.resolve(__dirname,'src/index.js'),
     },
     output:{
         path: path.resolve(__dirname,'dist'),
         filename: '[name].[contenthash].js',
-        assetModuleFilename: '[name][ext]',
         clean: true
     },
-    devtool: 'inline-source-map',
+    devtool: process.env.NODE_ENV === 'development' ? 'none' : 'source-map',
     devServer:{
         static: './dist',
         port: 5001,

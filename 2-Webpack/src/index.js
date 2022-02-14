@@ -13,6 +13,8 @@ const clearButtonID = 'clear-button'
 const cleanButtonID = 'clean-button'
 const todoListID = 'list'
 const menuID = 'menu'
+const enterKeycode = 13
+const escapeKeycode = 27
 
 function getNewID(){
     return new Date().getTime().toString()
@@ -192,15 +194,13 @@ function showItemsFromLocalStorage(){
 window.onload = function(){
 
     document.body.addEventListener('keyup', function (event){
-        // 27 -> escape key
-        if (event.keyCode === 27){
+        if (event.keyCode === escapeKeycode){
             document.getElementById(cancelButtonID).click()
             document.getElementById(titleInputID).focus()
         }
     })
     addEvent(menuID,'keyup',function(event) {
-        // 13 -> enter key
-        if (event.keyCode === 13) {
+        if (event.keyCode === enterKeycode) {
             document.getElementById(applyButtonID).click()
             document.getElementById(titleInputID).focus()
         }
