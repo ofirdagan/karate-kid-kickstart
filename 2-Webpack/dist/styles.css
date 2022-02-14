@@ -19,6 +19,9 @@ input::-webkit-input-placeholder {
 input:hover{
     transform: scale(1.1);
 }
+input:focus{
+    transform: scale(1.1);
+}
 .page-body{
     display:flex;
     flex-direction:column;
@@ -59,7 +62,7 @@ input:hover{
 .item{
     display:flex; 
     flex-direction:column; 
-    align-items: end;
+    align-items: center;
 }
 .display{
     min-width: 50%;
@@ -86,30 +89,30 @@ input:hover{
 .todo-item:hover{
     background-color: whitesmoke;
 }
-.item-checkbox{
+.itemCheckbox{
     margin-right: 10px;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-title {
+.itemCheckbox:checked ~div.todoItemText > .todoItemTitle {
     text-decoration: line-through;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-content{
+.itemCheckbox:checked ~div.todoItemText > .todoItemContent{
     visibility: hidden;
 }
-.item-checkbox:checked ~div.todo-item-buttons > .item-edit-button {
+.itemCheckbox:checked ~div.todo-item-buttons > .itemEditButton {
     visibility: hidden;
 }
-.todo-item-text{
+.todoItemText{
     display: flex; 
     flex-direction: column;
     align-self: stretch;
 }
-.todo-item-buttons{
+.todoItemButtons{
     display: flex; 
     flex-direction: row; 
     justify-content: space-between; 
     align-items: center;
 }
-.item-edit-button{
+.itemEditButton{
     font-family: 'Material Icons';
     font-size: 30px;
     text-align: center;
@@ -121,10 +124,10 @@ input:hover{
     opacity: 1;
     animation: fade 2s linear;
 }
-.item-edit-button:hover{
+.itemEditButton:hover{
     background-color: seagreen;  
 }
-.item-delete-button{
+.itemDeleteButton{
     font-family: 'Material Icons';
     font-size: 30px;
     text-align: center;
@@ -134,20 +137,20 @@ input:hover{
     border-radius: 30%;
     background-color: tomato;
 }
-.item-delete-button:hover{
+.itemDeleteButton:hover{
     background-color: crimson;
 }
-.item-checkbox{
+.itemCheckbox{
     align-self: center;
 }
-.item-checkbox:hover{
+.itemCheckbox:hover{
     transform: scale(1.3);
 }
-.todo-item-title{
+.todoItemTitle{
     font-size: 20px;
     font-weight: bold;
 }
-.todo-item-content{
+.todoItemContent{
     font-weight: thin;
     padding-left: 15px;
     color: grey;

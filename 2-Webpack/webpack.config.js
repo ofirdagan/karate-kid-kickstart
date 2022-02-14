@@ -28,16 +28,7 @@ module.exports = {
             },
             //assets
             {   test: /\.(svg|ico|png|webp|jpg|gif|jpeg)$/,
-                type:'asset/resource'},
-            //babel
-            {   test: /\.js$/i,
-                exclude: /node_modules/,
-                use:{
-                    loader: 'babel-loader',
-                    options:{
-                        presets:['@babel/preset-env']
-                    }
-                }
+                type:'asset/resource'
             },
         ]
     },

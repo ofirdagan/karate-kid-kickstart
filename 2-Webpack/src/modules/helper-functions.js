@@ -10,9 +10,13 @@ function getInnerText(id){
 function setInnerText(id,text){
     document.getElementById(id).innerText = text
 }
+function addEvent(id,eventName,func){
+    document.getElementById(id).addEventListener(eventName, func)
+}
 module.exports ={
     'getValue':getValue,
     'setValue':setValue,
     'getInnerText':getInnerText,
-    'setInnerText':setInnerText
+    'setInnerText':setInnerText,
+    'addEvent':addEvent
 }
