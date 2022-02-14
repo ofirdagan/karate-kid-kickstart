@@ -76,19 +76,19 @@ input:hover{
     margin-bottom: 12px;
 }
 
-.item-checkbox{
+.itemCheckbox{
     margin-right: 10px;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-title {
+.itemCheckbox:checked ~div.todoItemText > .todoItemTitle {
     text-decoration: line-through;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-subtitle {
+.itemCheckbox:checked ~div.todoItemText > .todo-item-subtitle {
     text-decoration: line-through;
 }
-.item-checkbox:checked ~div.todo-item-text > .todo-item-content {
+.itemCheckbox:checked ~div.todoItemText > .todoItemContent {
     display: none;
 }
-.todo-item-text{
+.todoItemText{
     display: flex; 
     flex-direction: column;
     align-self: stretch;
@@ -99,7 +99,7 @@ input:hover{
     justify-content: space-between; 
     align-items: center;
 }
-.item-edit-button{
+.itemEditButton{
     font-family: 'Material Icons';
     font-size: 30px;
     text-align: center;
@@ -109,10 +109,10 @@ input:hover{
     border-radius: 30%;
     background-color: greenyellow;
 }
-.item-edit-button:hover{
+.itemEditButton:hover{
     background-color: seagreen;  
 }
-.item-delete-button{
+.itemDeleteButton{
     font-family: 'Material Icons';
     font-size: 30px;
     text-align: center;
@@ -122,16 +122,16 @@ input:hover{
     border-radius: 30%;
     background-color: tomato;
 }
-.item-delete-button:hover{
+.itemDeleteButton:hover{
     background-color: crimson;
 }
-.item-checkbox{
+.itemCheckbox{
     align-self: center;
 }
-.item-checkbox:hover{
+.itemCheckbox:hover{
     transform: scale(1.3);
 }
-.todo-item-title{
+.todoItemTitle{
     font-size: 20px;
     font-weight: bold;
 }
@@ -141,7 +141,7 @@ input:hover{
     font-weight: thin;
     padding-left: 15px;
 }
-.todo-item-content{
+.todoItemContent{
     font-weight: thin;
     padding-left: 15px;
     color: grey;

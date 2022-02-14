@@ -117,8 +117,8 @@
         // input checkbox
         let itemCheckboxElement = document.createElement('input')
         itemCheckboxElement.type = 'checkbox'
-        itemCheckboxElement.className = 'item-checkbox'
-        // div todo-item-text
+        itemCheckboxElement.className = 'itemCheckbox'
+        // div todoItemText
         let itemTextElement = createItemTextElement(itemID,title,content)
         let itemButtonsElement = createItemButtonsElement(itemID)
         //append checkbox, text and buttons to list-item
@@ -135,12 +135,12 @@
         // button edit
         let editButtonElement = document.createElement('button')
         editButtonElement.innerText = 'edit'
-        editButtonElement.className = 'item-edit-button'
+        editButtonElement.className = 'itemEditButton'
         editButtonElement.setAttribute('onclick',`sendItemToEdit(${itemID})`)
         // button delete
         let deleteButtonElement = document.createElement('button')
         deleteButtonElement.innerText = 'delete'
-        deleteButtonElement.className = 'item-delete-button'
+        deleteButtonElement.className = 'itemDeleteButton'
         deleteButtonElement.setAttribute('onclick',`deleteItem(${itemID})`)
 
         // append the buttons to container
@@ -152,16 +152,16 @@
     function createItemTextElement(itemID,title,content){
     
         let itemTextElement = document.createElement('div')
-        itemTextElement.className = 'todo-item-text'
+        itemTextElement.className = 'todoItemText'
         // item title
         let titleElement = document.createElement('div')
         titleElement.innerText = title
-        titleElement.className = 'todo-item-title'
+        titleElement.className = 'todoItemTitle'
         titleElement.id = 'title'+itemID
         // item content
         let contentElement = document.createElement('div')
         contentElement.innerText = content
-        contentElement.className = 'todo-item-content'
+        contentElement.className = 'todoItemContent'
         contentElement.id = 'content'+itemID
         // append text to parent container 
         itemTextElement.appendChild(titleElement)
@@ -319,8 +319,8 @@
 //         // input checkbox
 //         let itemCheckboxElement = document.createElement('input')
 //         itemCheckboxElement.type = 'checkbox'
-//         itemCheckboxElement.className = 'item-checkbox'
-//         // div todo-item-text
+//         itemCheckboxElement.className = 'itemCheckbox'
+//         // div todoItemText
 //         let itemTextElement = createItemTextElement(itemID,title,content)
 //         let itemButtonsElement = createItemButtonsElement(itemID)
 //         //append checkbox, text and buttons to list-item
@@ -337,12 +337,12 @@
 //         // button edit
 //         let editButtonElement = document.createElement('button')
 //         editButtonElement.innerText = 'edit'
-//         editButtonElement.className = 'item-edit-button'
+//         editButtonElement.className = 'itemEditButton'
 //         editButtonElement.setAttribute('onclick',`sendItemToEdit(${itemID})`)
 //         // button delete
 //         let deleteButtonElement = document.createElement('button')
 //         deleteButtonElement.innerText = 'delete'
-//         deleteButtonElement.className = 'item-delete-button'
+//         deleteButtonElement.className = 'itemDeleteButton'
 //         deleteButtonElement.setAttribute('onclick',`deleteItem(${itemID})`)
 //         // append the buttons to container
 //         itemButtonsElement.appendChild(editButtonElement)
@@ -353,16 +353,16 @@
 //     function createItemTextElement(itemID,title,content){
     
 //         let itemTextElement = document.createElement('div')
-//         itemTextElement.className = 'todo-item-text'
+//         itemTextElement.className = 'todoItemText'
 //         // item title
 //         let titleElement = document.createElement('div')
 //         titleElement.innerText = title
-//         titleElement.className = 'todo-item-title'
+//         titleElement.className = 'todoItemTitle'
 //         titleElement.id = 'title'+itemID
 //         // item content
 //         let contentElement = document.createElement('div')
 //         contentElement.innerText = content
-//         contentElement.className = 'todo-item-content'
+//         contentElement.className = 'todoItemContent'
 //         contentElement.id = 'content'+itemID
 //         // append text to parent container 
 //         itemTextElement.appendChild(titleElement)
