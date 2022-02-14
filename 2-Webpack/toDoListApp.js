@@ -1,7 +1,18 @@
+import {
+  setItemToLocalStorage,
+  deleteFromLocalStorage,
+  restoreTasksFromStorage,
+} from "./localStorage.js";
 
 (function () {
   let idSerializer = 0;
   createAddTaskContainer();
+  if (localStorage) {
+    const localStorageList = restoreTasksFromStorage();
+    localStorageList.forEach((taskInfo) => {
+      createTask(JSON.parse(taskInfo).title);
+    });
+  }
 
   function createAddTaskContainer() {
     const buttonContainer = document.getElementById("add-button-container");
@@ -15,6 +26,7 @@
     addButton.textContent = "add";
     buttonContainer.appendChild(addButton);
   }
+
   function createButtonElements(taskInfo) {
     const buttonsWrapper = createHtmlElement("div", ["buttons-wrapper"]);
     const editButtonElement = createEditButton(taskInfo);
@@ -23,6 +35,7 @@
     buttonsWrapper.appendChild(deleteButtonElement);
     return buttonsWrapper;
   }
+
   function createEditButton(taskInfo) {
     const editButtonElement = createButtonElement(
       ["edit-task-info", "button-style"],
@@ -33,6 +46,7 @@
     editButtonElement.textContent = "edit";
     return editButtonElement;
   }
+
   function createDeleteButton(taskInfo) {
     const deleteButtonElement = createButtonElement(
       ["delete-task", "button-style"],
@@ -68,7 +82,9 @@
     toDoTaskElement.appendChild(buttonsWrapper);
     let ulElement = document.getElementById("to-do-list-container");
     ulElement.appendChild(toDoTaskElement);
+    setItemToLocalStorage(taskInfo);
   }
+
   function createTaskCheckBoxElement(taskInfo) {
     const checkBoxElement = createHtmlElement("input", ["to-do-task-checkbox"]);
     checkBoxElement.type = "checkbox";
@@ -93,10 +109,10 @@
   function deleteElementButtonHandler(event, id) {
     const task = document.getElementById(id);
     task.remove();
+    deleteFromLocalStorage(id);
   }
 
   function editElementButtonHandler(event, taskInfo) {
-    console.log(taskInfo.isEditMode);
     if (!taskInfo.isEditMode) {
       editElementTitle(taskInfo);
       taskInfo.isEditMode = true;
@@ -105,6 +121,7 @@
       taskInfo.isEditMode = false;
     }
   }
+
   function editElementTitle(taskInfo) {
     const task = document.getElementById(taskInfo.id);
     const taskTitle = task.querySelector("#task-title");
@@ -121,6 +138,7 @@
       }
     });
   }
+
   function setElementTitle(taskInfo) {
     const task = document.getElementById(taskInfo.id);
     const taskInputField = task.querySelector("#task-input-field");
@@ -131,6 +149,7 @@
     newTitle.textContent = taskInputField.value;
     taskInfo.title = newTitle.textContent;
     task.replaceChild(newTitle, taskInputField);
+    setItemToLocalStorage(taskInfo);
   }
 
   function createButtonElement(
@@ -145,6 +164,7 @@
     });
     return buttonElement;
   }
+
   function markTaskAsDone(event, taskInfo) {
     const task = document.getElementById(taskInfo.id);
     const taskCheck = task.querySelector("#task-checkbox");
