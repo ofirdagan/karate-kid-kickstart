@@ -1,7 +1,4 @@
-import jss from "jss";
-import preset from "jss-preset-default";
-
-jss.setup(preset());
+import jss from "./style-config";
 
 const colors = {
   blue: "#1e90ff",
