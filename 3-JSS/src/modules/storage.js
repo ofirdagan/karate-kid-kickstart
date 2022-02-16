@@ -5,7 +5,7 @@ function start(){
         localStorage.setItem(TODOList,todoMap)
     }
 }
-function setItemToLocalstorage(id, title, content){
+function set(id, title, content){
     start()
     const item = {
         "title": title,
@@ -16,25 +16,20 @@ function setItemToLocalstorage(id, title, content){
     todoMap[id]=item
     localStorage.setItem(TODOList,JSON.stringify(todoMap))
 }
-function removeItemFromLocalstorage(id){
+function remove(id){
     start()
     const todoListString = localStorage.getItem(TODOList)
     const todoMap = JSON.parse(todoListString)
     delete todoMap[id]
     localStorage.setItem(TODOList,JSON.stringify(todoMap))
 }
-function getAllItemsFromStorage(){
+function getAll(){
     start()
     return JSON.parse(localStorage.getItem(TODOList))
 }
-function getItemFromLocalstorage(id){
+function get(id){
     const todoMap = getAllItemsFromStorage()
     return todoMap[id]
 }
 
-module.exports ={
-    'set':setItemToLocalstorage,
-    'get':getItemFromLocalstorage,
-    'getAll':getAllItemsFromStorage,
-    'remove':removeItemFromLocalstorage,
-}
+export {set,get,remove,getAll}

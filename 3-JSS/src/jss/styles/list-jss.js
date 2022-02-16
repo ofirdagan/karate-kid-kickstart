@@ -1,10 +1,5 @@
-import jss from 'jss'
-import preset from 'jss-preset-default'
-
-jss.setup(preset())
-
-const style = {
-    '.list':{
+export const style = {
+    'list':{
         'padding-right': '50px',
     },
     'todoItem':{
@@ -84,5 +79,3 @@ const style = {
         'visibility':'hidden'
     }
 }
-
-export const {classes} = jss.createStyleSheet(style).attach()
