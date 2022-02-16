@@ -3,7 +3,7 @@ const { getValue,
         setValue,
         getInnerText,
         setInnerText,
-        addEvent} = require('./modules/helper-functions.js')
+        addEvent} = require('./modules/helperFunctions.js')
 const { titleInputID,
         addButtonID,
         contentInputID,
