@@ -3,18 +3,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    devtool: 'eval-source-map',
-    mode: 'development',
+
+    mode: 'production',
     entry:{
         main: path.resolve(__dirname,'src/index.js'),
     },
     output:{
         path: path.resolve(__dirname,'dist'),
         filename: '[name].[contenthash].js',
-        assetModuleFilename: '[name][ext]',
         clean: true
     },
-    devtool: 'inline-source-map',
+    devtool: process.env.NODE_ENV === 'development' ? 'none' : 'source-map',
     devServer:{
         static: './dist',
         port: 5001,
@@ -29,16 +28,7 @@ module.exports = {
             },
             //assets
             {   test: /\.(svg|ico|png|webp|jpg|gif|jpeg)$/,
-                type:'asset/resource'},
-            //babel
-            {   test: /\.js$/i,
-                exclude: /node_modules/,
-                use:{
-                    loader: 'babel-loader',
-                    options:{
-                        presets:['@babel/preset-env']
-                    }
-                }
+                type:'asset/resource'
             },
         ]
     },
@@ -50,7 +40,7 @@ module.exports = {
         }),
         new CopyPlugin({
             patterns: [
-              { from: "src/styles/*.css", to: path.resolve(__dirname,'dist/[name].css')},
+              { from: "src/styles/*.css", to: path.resolve(__dirname,'dist/styles.css')},
             ],
           })
     ]

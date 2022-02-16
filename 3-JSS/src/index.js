@@ -1,7 +1,21 @@
 const storage = require('./modules/storage.js')
-const {getValue,setValue,getInnerText,setInnerText} = require('./modules/helper-functions.js')
 const {classes} = require('./jss/list-jss.js')
-
+const { getValue,
+    setValue,
+    getInnerText,
+    setInnerText,
+    addEvent} = require('./modules/helperFunctions.js')
+const { titleInputID,
+    addButtonID,
+    contentInputID,
+    applyButtonID,
+    cancelButtonID,
+    clearButtonID,
+    cleanButtonID,
+    todoListID,
+    menuID,
+    enterKeycode,
+    escapeKeycode } = require('./modules/IDs.js')
 let editedID = 0;
 let editMode = false;
 
@@ -9,7 +23,7 @@ function getNewID(){
     return new Date().getTime().toString()
 }
 function addItem(){
-    const title = getValue('title-input')
+    const title = getValue(titleInputID)
     if (title == ''){
         alert('cant add an item without a title')
         return
@@ -19,8 +33,8 @@ function addItem(){
         return
     }
 
-    const content = getValue('content-input')
-    const list = document.getElementById('list')
+    const content = getValue(contentInputID)
+    const list = document.getElementById(todoListID)
     const id = getNewID()
     storage.set(id, title,content)
 
@@ -28,11 +42,11 @@ function addItem(){
     list.appendChild(itemElement)
 
     clearMenu()
-    setInnerText('apply-button','Add')
+    setInnerText(applyButtonID,'Add')
 }
 function deleteCheckedItems(){
     const itemList = storage.getAll()
-    const list = document.getElementById('list')
+    const list = document.getElementById(todoListID)
     for (const id in itemList) {
         const checkbox = document.getElementById(`itemCheckbox${id}`)
         if(checkbox.checked){
@@ -45,39 +59,39 @@ function deleteCheckedItems(){
 function cancelEdit(){
     clearMenu()
     editMode = false
-    setInnerText('apply-button','Add')
-    document.getElementById('cancel-button').hidden = true
+    setInnerText(applyButtonID,'Add')
+    document.getElementById(cancelButtonID).hidden = true
     editedID = 0  
 }
 
 function clearMenu(){
-    setValue('title-input','')
-    setValue('content-input','')
+    setValue(titleInputID,'')
+    setValue(contentInputID,'')
 }
 
 function menuButtonClick(){
     if(!editMode){
         addItem()
     }else{
-        if (getValue('title-input')==''){
+        if (getValue(titleInputID)==''){
             alert('cant set an empty title')
             return
         }
-        const title = getValue('title-input')
-        const content = getValue('content-input')
+        const title = getValue(titleInputID)
+        const content = getValue(contentInputID)
         setInnerText(`title${editedID}`,title)
         setInnerText(`content${editedID}`,content)
         storage.set(editedID, title, content)
         clearMenu()
         editMode = false
-        setInnerText('apply-button','Add')
-        document.getElementById('cancel-button').hidden = true
+        setInnerText(applyButtonID,'Add')
+        document.getElementById(cancelButtonID).hidden = true
         editedID = 0
     }
 }
 function addButton(){
     clearMenu()
-    document.getElementById('title-input').focus()
+    document.getElementById(titleInputID).focus()
 }
 
 function createTodoItemElement(itemID,title,content){
@@ -134,12 +148,12 @@ function createItemButtonsElement(itemID){
         editMode = true
         editedID = itemID
 
-        document.getElementById('cancel-button').hidden = false
-        setInnerText('apply-button','Apply')
+        document.getElementById(cancelButtonID).hidden = false
+        setInnerText(applyButtonID,'Apply')
         const title = getInnerText(`title${itemID}`)
         const content = getInnerText(`content${itemID}`)
-        setValue('title-input',title)
-        setValue('content-input',content)
+        setValue(titleInputID,title)
+        setValue(contentInputID,content)
     }
 
     const deleteButtonElement = document.createElement('button')
@@ -152,7 +166,7 @@ function createItemButtonsElement(itemID){
             return
         }
         const item = document.getElementById(itemID)
-        const list = document.getElementById('list')
+        const list = document.getElementById(todoListID)
 
         list.removeChild(item)
 
@@ -186,7 +200,7 @@ function createItemTextElement(itemID,title,content){
 }
 function showItemsFromLocalStorage(){
     const todoMap = storage.getAll()
-    const list = document.getElementById('list')
+    const list = document.getElementById(todoListID)
     for (const key in todoMap) {
         const item = todoMap[key]
         const title = item['title']
@@ -197,17 +211,23 @@ function showItemsFromLocalStorage(){
 }
 window.onload = function(){
 
-    document.getElementById('menu').addEventListener('keyup', function(event) {
-        if (event.keyCode === 13) {
-            document.getElementById('apply-button').click()
-            document.getElementById('title-input').focus()
+    document.body.addEventListener('keyup', function (event){
+        if (event.keyCode === escapeKeycode){
+            document.getElementById(cancelButtonID).click()
+            document.getElementById(titleInputID).focus()
         }
     })
-    document.getElementById('clear-button').onclick = clearMenu
-    document.getElementById('apply-button').onclick = menuButtonClick
-    document.getElementById('cancel-button').onclick = cancelEdit
-    document.getElementById('add-button').onclick = addButton
-    document.getElementById('clean-button').onclick = deleteCheckedItems
+    addEvent(menuID,'keyup',function(event) {
+        if (event.keyCode === enterKeycode) {
+            document.getElementById(applyButtonID).click()
+            document.getElementById(titleInputID).focus()
+        }
+    })
+    document.getElementById(clearButtonID).onclick = clearMenu
+    document.getElementById(applyButtonID).onclick = menuButtonClick
+    document.getElementById(cancelButtonID).onclick = cancelEdit
+    document.getElementById(addButtonID).onclick = addButton
+    document.getElementById(cleanButtonID).onclick = deleteCheckedItems
     
     showItemsFromLocalStorage()
 }
