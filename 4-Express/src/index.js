@@ -1,4 +1,5 @@
 const storage = require('./modules/storage.js')
+const axios = require('axios');
 const {classes} = require('./jss/list-jss.js')
 const { getValue,
     setValue,
@@ -15,7 +16,8 @@ const { titleInputID,
     todoListID,
     menuID,
     enterKeycode,
-    escapeKeycode } = require('./modules/IDs.js')
+    escapeKeycode,
+    serverBaseURL } = require('./modules/IDs.js')
 let editedID = 0;
 let editMode = false;
 
@@ -44,8 +46,8 @@ function addItem(){
     clearMenu()
     setInnerText(applyButtonID,'Add')
 }
-function deleteCheckedItems(){
-    const itemList = storage.getAll()
+async function deleteCheckedItems(){
+    const itemList = await storage.getAll()
     const list = document.getElementById(todoListID)
     for (const id in itemList) {
         const checkbox = document.getElementById(`itemCheckbox${id}`)
@@ -198,8 +200,9 @@ function createItemTextElement(itemID,title,content){
 
     return itemTextElement
 }
-function showItemsFromLocalStorage(){
-    const todoMap = storage.getAll()
+async function showItemsFromLocalStorage(){
+
+    const todoMap = await storage.getAll()
     const list = document.getElementById(todoListID)
     for (const key in todoMap) {
         const item = todoMap[key]

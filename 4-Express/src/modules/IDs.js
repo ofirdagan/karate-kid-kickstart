@@ -9,7 +9,7 @@ const todoListID = 'list'
 const menuID = 'menu'
 const enterKeycode = 13
 const escapeKeycode = 27
-
+const serverBaseURL = 'http://127.0.0.1:3000/'
 module.exports = {
     titleInputID: titleInputID,
     addButtonID : addButtonID,
@@ -21,5 +21,6 @@ module.exports = {
     todoListID : todoListID,
     menuID : menuID,
     enterKeycode : enterKeycode,
-    escapeKeycode : escapeKeycode
+    escapeKeycode : escapeKeycode,
+    serverBaseURL: serverBaseURL
 }
