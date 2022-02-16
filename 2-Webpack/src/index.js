@@ -1,20 +1,23 @@
 const storage = require('./modules/storage.js')
-const {getValue,setValue,getInnerText,setInnerText,addEvent} = require('./modules/helper-functions.js')
+const { getValue,
+        setValue,
+        getInnerText,
+        setInnerText,
+        addEvent} = require('./modules/helper-functions.js')
+const { titleInputID,
+        addButtonID,
+        contentInputID,
+        applyButtonID,
+        cancelButtonID,
+        clearButtonID,
+        cleanButtonID,
+        todoListID,
+        menuID,
+        enterKeycode,
+        escapeKeycode } = require('./modules/IDs.js')
 
 let editedID = 0;
 let editMode = false;
-
-const titleInputID = 'title-input'
-const addButtonID = 'add-button'
-const contentInputID = 'content-input'
-const applyButtonID = 'apply-button'
-const cancelButtonID = 'cancel-button'
-const clearButtonID = 'clear-button'
-const cleanButtonID = 'clean-button'
-const todoListID = 'list'
-const menuID = 'menu'
-const enterKeycode = 13
-const escapeKeycode = 27
 
 function getNewID(){
     return new Date().getTime().toString()
