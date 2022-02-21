@@ -1,5 +1,5 @@
 const path = require('path')
-const db = require(path.resolve('server/db/','db.js'))
+const db = require(path.resolve('server/db/','db'))
 
 const setItem = (req,res,next) => {
     if(!req.body||!req.body.id)

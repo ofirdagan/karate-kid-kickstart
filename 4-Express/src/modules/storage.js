@@ -1,8 +1,8 @@
 const axios = require('axios')
-const {serverBaseURL} = require('./IDs')
+const {serverBaseURL} = require('./constants')
 const TODOList = 'TODO-List'
 
-function setItemToServerStorage(id, title, content){
+function set(id, title, content){
     const data = {
         id: id,
         title: title,
@@ -27,7 +27,7 @@ function setItemToServerStorage(id, title, content){
         });
 }
 
-function removeItemFromServerStorage(id){
+function remove(id){
     const config = {
         method: 'delete',
         url: serverBaseURL+'storage/delete/'+id,   
@@ -38,7 +38,7 @@ function removeItemFromServerStorage(id){
         });
 }
 
-async function getAllItemsFromServerStorage(){
+async function getAll(){
     let todoMap = {}
     const config = {
         method: 'get',
@@ -54,9 +54,7 @@ async function getAllItemsFromServerStorage(){
     return todoMap
 }
 
-async function getItemFromServerStorage(id){
-    // const todoMap = getAllItemsFromStorage()
-
+async function get(id){
     const config = {
         method: 'get',
         url: serverBaseURL+'storage/get/'+id,
@@ -66,15 +64,9 @@ async function getItemFromServerStorage(id){
             return response.data
         })
         .catch(function (error) {
-            return todoMap
+            return todoMap[id]
         });
-    return todoMap
     return todoMap[id]
 }
 
-module.exports ={
-    'set':setItemToServerStorage,
-    'get':getItemFromServerStorage,
-    'getAll':getAllItemsFromServerStorage,
-    'remove':removeItemFromServerStorage,
-}
+export {set,get,getAll,remove}

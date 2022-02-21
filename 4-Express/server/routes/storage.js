@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const getItem = require('../handlers/storage/getItem.js')
-const setItem = require('../handlers/storage/setItem.js')
-const removeItem = require('../handlers/storage/removeItem.js')
-const getAllItems = require('../handlers/storage/getAllItems.js')
+const getItem = require('../handlers/storage/getItem')
+const setItem = require('../handlers/storage/setItem')
+const removeItem = require('../handlers/storage/removeItem')
+const getAllItems = require('../handlers/storage/getAllItems')
 
 
 router.get('/get/:id', getItem)

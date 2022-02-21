@@ -1,5 +1,5 @@
 const path = require('path')
-const db = require(path.resolve('server/db/','db.js'))
+const db = require(path.resolve('server/db/','db'))
 
 const removeItem = (req,res,next) => {
     const id = req.params.id   
@@ -9,7 +9,7 @@ const removeItem = (req,res,next) => {
         res.status(200).send(`deleted item no: ${req.params.id}`)
     }
     else{
-        res.status(404).send(`can not find item no:${eq.params.id}`)
+        res.status(404).send(`can not find item no: ${eq.params.id}`)
     }
 }
 module.exports = removeItem

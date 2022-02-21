@@ -1,5 +1,5 @@
 const path = require('path')
-const db = require(path.resolve('server/db/','db.js'))
+const db = require(path.resolve('server/db/','db'))
 
 const getItem = (req,res,next) => {
     if(db[req.params.id]){

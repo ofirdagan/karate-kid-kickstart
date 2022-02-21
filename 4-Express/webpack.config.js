@@ -1,10 +1,12 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin');
+const dotenv = require('dotenv')
+dotenv.config({path: '.env'})
 
 module.exports = {
 
-    mode: 'production',
+    mode: process.env.NODE_ENV,
     entry:{
         main: path.resolve(__dirname,'src/index.js'),
     },
@@ -13,22 +15,17 @@ module.exports = {
         filename: '[name].[contenthash].js',
         clean: true
     },
-    devtool: process.env.NODE_ENV === 'development' ? 'none' : 'source-map',
+    devtool: process.env.NODE_ENV === 'development' && 'inline-source-map',
     devServer:{
         static: './dist',
-        port: 5001,
+        port: process.env.CLIENT_PORT,
         open: true,
         hot: true,
     },
     module:{
         rules:[
-            //css
             {   test: /\.css$/i , 
                 use: ['style-loader','css-loader'],
-            },
-            //assets
-            {   test: /\.(svg|ico|png|webp|jpg|gif|jpeg)$/,
-                type:'asset/resource'
             },
         ]
     },
