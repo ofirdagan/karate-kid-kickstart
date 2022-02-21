@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const uuid = require("uuid");
+require('dotenv').config();
+
 const Schema = mongoose.Schema;
 
-const MONGO_URI =
-  "mongodb+srv://mongo:1J6rVJPjdrskmtS8@mychecklistcluster.z23uf.mongodb.net/MyChecklist";
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
@@ -22,19 +24,29 @@ const TodoSchema = new Schema({
 
 const Todo = mongoose.model("Todo", TodoSchema);
 
-function dbUpdateCallback(res, successStatus) {
+function dbUpdateCallback(req, res, successStatus) {
   return function (error, doc) {
     if (error) {
       console.log(error);
       res.status(500).send("Database error!");
     } else {
-      res.sendStatus(201);
+      res.sendStatus(successStatus);
     }
   };
 }
 
 module.exports.getItems = (req, res) => {
-  Todo.find({ user_id: 0 }, function (err, docs) {
+  let userId;
+
+  if (req.cookies === undefined ||
+    req.cookies.userId === undefined) {
+    userId = uuid.v4();
+    res.cookie('userId', userId, { maxAge: 900000 });
+  } else {
+    userId = req.cookies.userId;
+  }
+
+  Todo.find({ user_id: userId }, function (err, docs) {
     if (err) {
       console.log(err);
       res.sendStatus(500);
@@ -55,28 +67,28 @@ module.exports.getItems = (req, res) => {
 
 module.exports.createItem = (req, res) => {
   const todo = new Todo({
-    user_id: 0,
+    user_id: req.cookies.userId,
     id: req.body.id,
     text: req.body.text,
     check: req.body.check,
   });
 
-  todo.save(dbUpdateCallback(res, 201));
+  todo.save(dbUpdateCallback(req, res, 201));
 };
 
 module.exports.editItem = (req, res) => {
-  const query = { user_id: 0, id: req.params.id };
+  const query = { user_id: req.cookies.userId, id: req.params.id };
   const item = {
-    user_id: 0,
+    user_id: req.cookies.userId,
     id: req.params.id,
     text: req.body.text,
     check: req.body.check,
   };
 
-  Todo.findOneAndUpdate(query, item, dbUpdateCallback(res, 200));
+  Todo.findOneAndUpdate(query, item, dbUpdateCallback(req, res, 200));
 };
 
 module.exports.deleteItem = (req, res) => {
-  const query = { user_id: 0, id: req.params.id };
-  Todo.deleteOne(query, dbUpdateCallback(res, 200));
+  const query = { user_id: req.cookies.userId, id: req.params.id };
+  Todo.deleteOne(query, dbUpdateCallback(req, res, 200));
 };
