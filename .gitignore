@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-node_modules
->>>>>>> 9061cda (review fixes)
 .DS_Store
 dist
 node_modules
