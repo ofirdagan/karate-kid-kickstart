@@ -1,20 +1,20 @@
-const path = require('path')
-const db = require(path.resolve('server/db/','db'))
+const db = require('../../db')
 
-const setItem = (req,res,next) => {
-    if(!req.body||!req.body.id)
+const setItem = (req, res, next) => {
+    if (!req.body?.id) {
         res.status(400).send("missing item information")
+        return
+    }
+    if (req.body?.title === '') {
+        res.status(400).send(`can not set an item with no title`)
+        return
+    }
     const id = req.body.id
     const item = {
-        title : req.body.title,
-        content : req.body.content
+        title: req.body.title,
+        content: req.body.content
     }
-    if(req.body.title && req.body.title !== ''){
-        db[id]=item
-        res.status(201).send(db[req.params.id])
-    }
-    else{
-        res.status(400).send(`can not set an item with no title`)
-    }
+    db[id] = item
+    res.status(201).send(db[req.body.id])
 }
 module.exports = setItem

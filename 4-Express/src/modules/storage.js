@@ -1,25 +1,18 @@
 const axios = require('axios')
-const {serverBaseURL} = require('./constants')
+const { serverBaseURL } = require('./constants')
 const TODOList = 'TODO-List'
 
-function set(id, title, content){
+async function set(id, title, content) {
     const data = {
         id: id,
         title: title,
-        content : content
+        content: content
     }
-    const config = {
-        method: 'post',
-        data : data,
-        url: serverBaseURL+'storage/set',
-        
-    };
-    axios(config)
+    axios.post(`${serverBaseURL}storage/set`, data)
         .then(function (response) {
-            if(response.status==201){
-                console.log(`item no: ${id} is  updated`)
-            }else{
+            if (response.status != 201) {
                 alert(`item update is denied, server status ${response.status}`)
+                return
             }
         })
         .catch(function (error) {
@@ -27,46 +20,35 @@ function set(id, title, content){
         });
 }
 
-function remove(id){
-    const config = {
-        method: 'delete',
-        url: serverBaseURL+'storage/delete/'+id,   
-    };
-    axios(config)
+async function remove(id) {
+    axios.delete(`${serverBaseURL}storage/delete/${id}`)
         .catch(function (error) {
             alert(`item deletion is denied, ${error}`);
         });
 }
 
-async function getAll(){
+async function getAll() {
     let todoMap = {}
-    const config = {
-        method: 'get',
-        url: serverBaseURL+'storage/all',
-    };
-    await axios(config)
+    await axios.get(`${serverBaseURL}storage/all`)
         .then(function (response) {
             todoMap = response.data
         })
         .catch(function (error) {
-            return todoMap
+            alert('can\'t get items')
         });
     return todoMap
 }
 
-async function get(id){
-    const config = {
-        method: 'get',
-        url: serverBaseURL+'storage/get/'+id,
-    };
-    await axios(config)
+async function get(id) {
+    let todoItem = {}
+    await axios.get(`${serverBaseURL}storage/get/${id}`)
         .then(function (response) {
-            return response.data
+            todoItem = response.data
         })
         .catch(function (error) {
-            return todoMap[id]
+            alert(`can not find item no: ${id}`)
         });
-    return todoMap[id]
+    return todoItem
 }
 
-export {set,get,getAll,remove}
+export { set, get, getAll, remove }

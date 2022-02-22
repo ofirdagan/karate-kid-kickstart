@@ -1,14 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const getItem = require('../handlers/storage/getItem')
-const setItem = require('../handlers/storage/setItem')
-const removeItem = require('../handlers/storage/removeItem')
-const getAllItems = require('../handlers/storage/getAllItems')
+const storage = require('../handlers/storage')
 
-
-router.get('/get/:id', getItem)
-router.post('/set', setItem)
-router.delete('/delete/:id', removeItem)
-router.get('/All', getAllItems)
+router.get('/get/:id', storage.getItem)
+router.post('/set', storage.setItem)
+router.delete('/delete/:id', storage.removeItem)
+router.get('/All', storage.getAllItems)
 
 module.exports = router
