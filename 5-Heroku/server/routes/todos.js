@@ -12,7 +12,6 @@ router.use(checkCookies);
 
 router.get("/", async (req, res) => {
   const _id = req.cookies.userId;
-  console.log(_id);
   const toDoList = await ToDoModel.findById(_id).clone();
   res.send(toDoList.tasks);
 });

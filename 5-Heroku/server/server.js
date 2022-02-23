@@ -2,10 +2,10 @@ const express = require("express");
 const toDoRouter = require("./routes/todos");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { process } = require("ipaddr.js");
+require("dotenv").config('5-Heroku/server/.env');
 
 mongoose.connect(
-  process.env.MONGODB_CONNECTION,
+  process.env.MONGODB_URL,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
