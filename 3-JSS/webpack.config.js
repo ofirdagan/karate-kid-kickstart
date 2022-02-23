@@ -13,9 +13,7 @@ module.exports = {
     port: 8080,
     open: true,
   },
-  externals: {
-    jss: "jss",
-  },
+  
   plugins: [
     new CopyWebpackPlugin({
       patterns: [

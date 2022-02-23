@@ -1,20 +1,28 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { v1:uuidv1, v4: uuidv4 } = require("uuid");
+const cookieParser = require("cookie-parser");
 const router = express.Router();
 const jsonParser = bodyParser.json();
 
-let idIndex = 1;
-const toDoList = {
-};
+router.use(cookieParser());
+
+const toDoList = {};
+router.get('/cookies',(req, res) =>{
+  const userId = uuidv1();
+  res.cookie("userId",userId);
+  res.send("cookie setup");
+
+})
 
 router.get("/", (req, res) => {
   res.send(toDoList);
 });
 
 router.post("/", jsonParser, async (req, res) => {
-  toDoList[idIndex] = { title: req.body.title };
-  res.status(200).send({ id: idIndex });
-  idIndex++;
+  const id = uuidv4();
+  toDoList[id] = { title: req.body.title };
+  res.status(200).send({ id: id });
 });
 
 router.patch("/:id", jsonParser, async (req, res) => {
