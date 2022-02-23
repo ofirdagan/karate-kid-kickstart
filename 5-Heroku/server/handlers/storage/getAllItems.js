@@ -1,19 +1,20 @@
 const db = require('../../db')
-const mongodb = require('mongodb')
+const MongoClient = require('mongodb').MongoClient
 const getAllItems = (req,res,next) => {
-    const MongoClient = mongodb.MongoClient
-    const url = 'mongodb://localhost:27017';
-    const dbName = 'users';
+    const url = 'mongodb://localhost:27017/data';
+    const dbName = 'data';
     const mongoClient = new MongoClient(url);
     mongoClient.connect(function(err, client) {
+        console.log("connecting...",client)
         if(!err){
             console.log('connected to db')
         }
         else{
-            console.log('unable to connecte to db')
+            console.log('unable to connecte to db',err)
         }
-    const db = client.db(dbName);
-    client.close();
+        const dbFromMongo = client.db(dbName);
+        console.log(dbFromMongo)
+        client.close();
     });
     res.status(200).send(db)
 }

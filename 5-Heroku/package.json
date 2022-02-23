@@ -5,6 +5,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development webpack serve",
+    "start": "node ./bin/www",
     "server": "nodemon ./server/server.js"
   },
   "author": "",
@@ -28,6 +29,8 @@
     "express": "^4.17.2",
     "jss": "^10.9.0",
     "jss-preset-default": "^10.9.0",
-    "mongodb": "^4.4.0"
+    "mongod": "^2.0.0",
+    "mongodb": "^4.4.0",
+    "mongoose": "^6.2.3"
   }
 }
