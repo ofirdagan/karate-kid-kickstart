@@ -2,9 +2,10 @@ const express = require("express");
 const toDoRouter = require("./routes/todos");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const { process } = require("ipaddr.js");
 
 mongoose.connect(
-  "mongodb+srv://chanam:cm%40mondb22@cluster0.ifmbl.mongodb.net/ToDo's?retryWrites=true&w=majority",
+  process.env.MONGODB_CONNECTION,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
