@@ -5,10 +5,7 @@ import { classes } from './jss/jss'
 let editedID = 0;
 let editMode = false;
 
-function getNewID() {
-    return new Date().getTime().toString()
-}
-function addItem() {
+async function addItem() {
     const title = getValue(constants.titleInputID)
     if (title === '') {
         alert('cant add an item without a title')
@@ -21,9 +18,11 @@ function addItem() {
 
     const content = getValue(constants.contentInputID)
     const list = document.getElementById(constants.todoListID)
-    const id = getNewID()
-    storage.set(id, title, content)
-
+    const id = await storage.set('none', title, content)
+    if (!id) {
+       alert('failed to create item')
+       return
+    }
     const itemElement = createTodoItemElement(id, title, content)
     list.appendChild(itemElement)
 

@@ -1,12 +1,18 @@
-const db = require('../../db')
+const mongoose = require('mongoose')
+const itemModel = require('../../models/item')
 
 const removeItem = (req, res, next) => {
-    const id = req.params.id
-    if (!db[id]) {
-        res.status(404).send(`can not find item no: ${req.params.id}`)
+    if (req.params?.id === '') {
+        res.status(404).send(`missing item number`)
         return
     }
-    delete db[id]
-    res.status(200).send(`deleted item no: ${req.params.id}`)
+    const query = itemModel.findByIdAndDelete(req.params.id)
+    query.exec((function (err, item) {
+        if (err) {
+            res.status(404).send(`item ${req.params.id ? 'no: ' + req.params.id + ' ' : ''}not found`)
+            return
+        }
+        res.status(200).send(`item no: ${req.params.id} deleted`)
+    }))
 }
 module.exports = removeItem

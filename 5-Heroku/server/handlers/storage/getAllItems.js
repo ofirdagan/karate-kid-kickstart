@@ -1,21 +1,19 @@
-const db = require('../../db')
-const MongoClient = require('mongodb').MongoClient
-const getAllItems = (req,res,next) => {
-    const url = 'mongodb://localhost:27017/data';
-    const dbName = 'data';
-    const mongoClient = new MongoClient(url);
-    mongoClient.connect(function(err, client) {
-        console.log("connecting...",client)
-        if(!err){
-            console.log('connected to db')
+const mongoose = require('mongoose')
+const itemModel = require('../../models/item')
+const getAllItems = async (req, res, next) => {
+    const allItems = {}
+    const query = itemModel.find()
+    query.exec((function (err, items) {
+        if (err) {
+            res.status(404).send('could not find items')
+            return
         }
-        else{
-            console.log('unable to connecte to db',err)
+        for (const item of items) {
+            const { _id, title, content } = item
+            allItems[_id] = { title: title, content: content }
         }
-        const dbFromMongo = client.db(dbName);
-        console.log(dbFromMongo)
-        client.close();
-    });
-    res.status(200).send(db)
+        res.status(200).send(allItems)
+    }))
+
 }
 module.exports = getAllItems

@@ -5,10 +5,13 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const mongo = require('mongodb')
 const dotenv = require('dotenv')
-dotenv.config({path: '.env'})
+dotenv.config({ path: '.env' })
+
+require('./db/connect')
+
 
 const app = express()
-app.use(cors({origin: true,credentials:true}));
+app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser())
 
