@@ -21,6 +21,12 @@ module.exports = {
         port: process.env.CLIENT_PORT,
         open: true,
         hot: true,
+        proxy: {
+            '/todos': {
+              target: 'http://localhost:3000',
+              secure: false
+            }
+          }
     },
     module:{
         rules:[

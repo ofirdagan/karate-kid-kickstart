@@ -1,15 +1,15 @@
-const mongoose = require('mongoose')
-const itemSchema = mongoose.Schema({
-    userID:{
+const { Schema, model } = require('mongoose')
+const itemSchema = Schema({
+    userID: {
         type: String,
         required: true
     },
-    title:{
+    title: {
         type: String,
         required: true
     },
-    content:{
-        type:String
+    content: {
+        type: String
     }
 })
-module.exports = mongoose.model('item',itemSchema)
+module.exports = model('item', itemSchema)

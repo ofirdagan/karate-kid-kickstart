@@ -1,23 +1,21 @@
 const express = require('express')
-const storageRouter = require('./routes/storage')
-const cors = require('cors');
+const todosRouter = require('./routes/todos')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const mongodb = require('mongodb')
 const dotenv = require('dotenv')
+const db = require('./db/dbController')
 const IDinCookie = require('./middleware/IDinCookie')
 dotenv.config({ path: '.env' })
 
-require('./db/connect')
-
-
+try {
+    db.connectToDB()
+} catch (err) {
+    console.log('unable to connect to mongoDB')
+}
 const app = express()
-app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser())
-
 app.use(IDinCookie)
-
-app.use('/storage', storageRouter)
+app.use('/todos', todosRouter)
 
 app.listen(process.env.SERVER_PORT)

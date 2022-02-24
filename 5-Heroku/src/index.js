@@ -1,77 +1,125 @@
 import * as constants from './modules/constants'
-import * as storage from './modules/storage'
-import { getValue, setValue, getInnerText, setInnerText, addEvent } from './modules/documentHelpers'
+import * as serverAPI from './modules/serverAPI'
+import * as docUtil from './modules/documentHelpers'
 import { classes } from './jss/jss'
+import { v4 as uuidv4 } from 'uuid';
 let editedID = 0;
 let editMode = false;
 
-async function addItem() {
-    const title = getValue(constants.titleInputID)
-    if (title === '') {
-        alert('cant add an item without a title')
+
+const deleteButtonClick = (event) => {
+    if (editMode) {
+        alert('cant delete while in edit mode')
         return
     }
+    const itemID = event.target.id.replace('itemDelete', '').toString()
+    serverAPI.remove(itemID)
+        .then(() => {
+            const itemElement = document.getElementById(itemID)
+            const listElement = document.getElementById(constants.todoListID)
+            listElement.removeChild(itemElement)
+        })
+        .catch(err => alert(`item deletion is denied, ${err}`))
+}
+const editButtonClick = (event) => {
+    editedID = event.target.id.replace('itemEdit', '').toString()
+    editMode = true
+    document.getElementById(constants.cancelButtonID).hidden = false
+    docUtil.setInnerText(constants.applyButtonID, 'Apply')
+    const title = docUtil.getInnerText(`title${editedID}`)
+    const content = docUtil.getInnerText(`content${editedID}`)
+    docUtil.setValue(constants.titleInputID, title)
+    docUtil.setValue(constants.contentInputID, content)
+}
+const itemCheckboxClick = (event) => {
+    const itemID = event.target.id.replace('itemCheckbox', '').toString()
+    const titleElement = document.getElementById(`title${itemID}`)
+    const contentElement = document.getElementById(`content${itemID}`)
+    const editButtonElement = document.getElementById(`itemEdit${itemID}`)
+    const action = !event.target.checked ? 'remove' : 'add'
+    titleElement.classList[action](classes.strike)
+    contentElement.classList[action](classes.invisible)
+    editButtonElement.classList[action](classes.invisible)
+}
+function addItem() {
+    const title = docUtil.getValue(constants.titleInputID)
+    if (title === '') return
     if (editMode) {
         alert('cant add an item while in edit mode')
         return
     }
-
-    const content = getValue(constants.contentInputID)
+    const content = docUtil.getValue(constants.contentInputID)
     const list = document.getElementById(constants.todoListID)
-    const id = await storage.set('none', title, content)
-    if (!id) {
-       alert('failed to create item')
-       return
-    }
-    const itemElement = createTodoItemElement(id, title, content)
-    list.appendChild(itemElement)
+    const _id = uuidv4()
+    serverAPI.set(_id, title, content)
+        .then(newItem => {
+            if (!newItem) {
+                alert('failed to create item')
+                return
+            }
+            const itemElement = createTodoItemElement(newItem._id, title, content)
+            list.appendChild(itemElement)
+            clearMenu()
+            docUtil.setInnerText(constants.applyButtonID, 'Add')
+        })
+        .catch(err => alert(`item update is denied, ${err}`))
 
-    clearMenu()
-    setInnerText(constants.applyButtonID, 'Add')
 }
-async function deleteCheckedItems() {
-    const itemList = await storage.getAll()
-    const list = document.getElementById(constants.todoListID)
-    for (const id in itemList) {
-        const checkbox = document.getElementById(`itemCheckbox${id}`)
-        if (checkbox.checked) {
-            const itemElement = document.getElementById(`${id}`)
-            list.removeChild(itemElement)
-            storage.remove(id)
-        }
+
+function deleteCheckedItems() {
+    if (editMode) {
+        alert('cant delete while in edit mode')
+        return
     }
+    serverAPI.getAll()
+        .then(itemList => {
+            const list = document.getElementById(constants.todoListID)
+            itemList.forEach(async (item) => {
+                const checkbox = document.getElementById(`itemCheckbox${item._id}`)
+                if (checkbox.checked) {
+                    const itemElement = document.getElementById(`${item._id}`)
+                    serverAPI.remove(item._id)
+                        .then((result) => list.removeChild(itemElement))
+                        .catch(err => alert(`item deletion is denied, ${err}`))
+                }
+            })
+        })
+        .catch((err) => alert(`Can\'t get items, Please try refreshing the page, ${err}`))
 }
 function cancelEdit() {
     clearMenu()
     editMode = false
-    setInnerText(constants.applyButtonID, 'Add')
+    docUtil.setInnerText(constants.applyButtonID, 'Add')
     document.getElementById(constants.cancelButtonID).hidden = true
     editedID = 0
 }
 
 function clearMenu() {
-    setValue(constants.titleInputID, '')
-    setValue(constants.contentInputID, '')
+    docUtil.setValue(constants.titleInputID, '')
+    docUtil.setValue(constants.contentInputID, '')
 }
 
 function menuButtonClick() {
     if (!editMode) {
         addItem()
     } else {
-        if (getValue(constants.titleInputID) === '') {
+        if (docUtil.getValue(constants.titleInputID) === '') {
             alert('cant set an empty title')
             return
         }
-        const title = getValue(constants.titleInputID)
-        const content = getValue(constants.contentInputID)
-        setInnerText(`title${editedID}`, title)
-        setInnerText(`content${editedID}`, content)
-        storage.set(editedID, title, content)
-        clearMenu()
-        editMode = false
-        setInnerText(constants.applyButtonID, 'Add')
-        document.getElementById(constants.cancelButtonID).hidden = true
-        editedID = 0
+        const title = docUtil.getValue(constants.titleInputID)
+        const content = docUtil.getValue(constants.contentInputID)
+        docUtil.setInnerText(`title${editedID}`, title)
+        docUtil.setInnerText(`content${editedID}`, content)
+        serverAPI.set(editedID, title, content)
+            .then(item => {
+                if (!item) return
+                clearMenu()
+                editMode = false
+                docUtil.setInnerText(constants.applyButtonID, 'Add')
+                document.getElementById(constants.cancelButtonID).hidden = true
+                editedID = 0
+            }).catch((err) => alert(`item update is denied, ${err}`))
     }
 }
 function addButton() {
@@ -89,9 +137,7 @@ function createTodoItemElement(itemID, title, content) {
     const itemTextElement = createItemTextElement(itemID, title, content)
     const itemButtonsElement = createItemButtonsElement(itemID)
 
-    itemElement.appendChild(itemCheckboxElement)
-    itemElement.appendChild(itemTextElement)
-    itemElement.appendChild(itemButtonsElement)
+    itemElement.append(itemCheckboxElement, itemTextElement, itemButtonsElement)
 
     return itemElement
 }
@@ -100,20 +146,7 @@ function createItemCheckboxElement(itemID) {
     itemCheckboxElement.type = 'checkbox'
     itemCheckboxElement.classList.add(classes.itemCheckbox)
     itemCheckboxElement.id = `itemCheckbox${itemID}`
-    itemCheckboxElement.onclick = function () {
-        const titleElement = document.getElementById(`title${itemID}`)
-        const contentElement = document.getElementById(`content${itemID}`)
-        const editButtonElement = document.getElementById(`itemEdit${itemID}`)
-        if (!this.checked) {
-            titleElement.classList.remove(classes.strike)
-            contentElement.classList.remove(classes.invisible)
-            editButtonElement.classList.remove(classes.invisible)
-        } else {
-            titleElement.classList.add(classes.strike)
-            contentElement.classList.add(classes.invisible)
-            editButtonElement.classList.add(classes.invisible)
-        }
-    }
+    itemCheckboxElement.addEventListener('click', itemCheckboxClick)
     return itemCheckboxElement
 }
 function createItemButtonsElement(itemID) {
@@ -125,38 +158,15 @@ function createItemButtonsElement(itemID) {
     editButtonElement.id = `itemEdit${itemID}`
     editButtonElement.innerText = 'edit'
     editButtonElement.classList.add(classes.itemEditButton)
-    editButtonElement.onclick = function () {
-
-        editMode = true
-        editedID = itemID
-
-        document.getElementById(constants.cancelButtonID).hidden = false
-        setInnerText(constants.applyButtonID, 'Apply')
-        const title = getInnerText(`title${itemID}`)
-        const content = getInnerText(`content${itemID}`)
-        setValue(constants.titleInputID, title)
-        setValue(constants.contentInputID, content)
-    }
+    editButtonElement.addEventListener('click', editButtonClick)
 
     const deleteButtonElement = document.createElement('button')
     deleteButtonElement.id = `itemDelete${itemID}`
     deleteButtonElement.innerText = 'delete'
     deleteButtonElement.classList.add(classes.itemDeleteButton)
-    deleteButtonElement.onclick = function () {
-        if (editMode) {
-            alert('cant delete while in edit mode')
-            return
-        }
-        const item = document.getElementById(itemID)
-        const list = document.getElementById(constants.todoListID)
+    deleteButtonElement.addEventListener('click', deleteButtonClick)
 
-        list.removeChild(item)
-
-        storage.remove(itemID)
-    }
-
-    itemButtonsElement.appendChild(editButtonElement)
-    itemButtonsElement.appendChild(deleteButtonElement)
+    itemButtonsElement.append(editButtonElement, deleteButtonElement)
 
     return itemButtonsElement
 }
@@ -175,23 +185,21 @@ function createItemTextElement(itemID, title, content) {
     contentElement.classList.add(classes.todoItemContent)
     contentElement.id = `content${itemID}`
 
-    itemTextElement.appendChild(titleElement)
-    itemTextElement.appendChild(contentElement)
+    itemTextElement.append(titleElement, contentElement)
 
     return itemTextElement
 }
-async function showItemsFromLocalStorage() {
-    const todoMap = await storage.getAll()
-    const list = document.getElementById(constants.todoListID)
-    for (const key in todoMap) {
-        const item = todoMap[key]
-        const title = item['title']
-        const content = item['content']
-        const itemElement = createTodoItemElement(key, title, content)
-        list.appendChild(itemElement)
-    }
+function showItemsFromDB() {
+    serverAPI.getAll()
+        .then(itemList => {
+            const list = document.getElementById(constants.todoListID)
+            itemList.forEach((item) => {
+                const itemElement = createTodoItemElement(item._id, item.title, item.content)
+                list.appendChild(itemElement)
+            })
+        }).catch(err => alert('unable to get items,' + err))
 }
-window.onload = async function () {
+window.onload = function () {
 
     document.body.addEventListener('keyup', function (event) {
         if (event.keyCode === constants.escapeKeycode) {
@@ -199,17 +207,17 @@ window.onload = async function () {
             document.getElementById(constants.titleInputID).focus()
         }
     })
-    addEvent(constants.menuID, 'keyup', function (event) {
+    docUtil.addEvent(constants.menuID, 'keyup', function (event) {
         if (event.keyCode === constants.enterKeycode) {
             document.getElementById(constants.applyButtonID).click()
             document.getElementById(constants.titleInputID).focus()
         }
     })
-    document.getElementById(constants.clearButtonID).onclick = clearMenu
-    document.getElementById(constants.applyButtonID).onclick = menuButtonClick
-    document.getElementById(constants.cancelButtonID).onclick = cancelEdit
-    document.getElementById(constants.addButtonID).onclick = addButton
-    document.getElementById(constants.cleanButtonID).onclick = deleteCheckedItems
+    docUtil.addEvent(constants.clearButtonID, 'click', clearMenu)
+    docUtil.addEvent(constants.applyButtonID, 'click', menuButtonClick)
+    docUtil.addEvent(constants.cancelButtonID, 'click', cancelEdit)
+    docUtil.addEvent(constants.addButtonID, 'click', addButton)
+    docUtil.addEvent(constants.cleanButtonID, 'click', deleteCheckedItems)
 
-    showItemsFromLocalStorage()
+    showItemsFromDB()
 }

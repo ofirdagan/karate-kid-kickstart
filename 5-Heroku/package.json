@@ -5,8 +5,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development webpack serve",
-    "start": "node ./bin/www",
-    "server": "nodemon ./server/server.js"
+    "start": "nodemon ./server/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,12 +23,11 @@
     "axios": "^0.26.0",
     "body-parser": "^1.19.2",
     "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "jss": "^10.9.0",
     "jss-preset-default": "^10.9.0",
     "mongoose": "^6.2.3",
-    "mongodb": "^4.4.0"
+    "uuid": "^8.3.2"
   }
 }
