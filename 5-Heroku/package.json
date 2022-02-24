@@ -29,6 +29,7 @@
     "express": "^4.17.2",
     "jss": "^10.9.0",
     "jss-preset-default": "^10.9.0",
-    "mongoose": "^6.2.3"
+    "mongoose": "^6.2.3",
+    "mongodb": "^4.4.0"
   }
 }

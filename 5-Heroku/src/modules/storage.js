@@ -8,7 +8,7 @@ async function set(id, title, content) {
         title: title,
         content: content
     }
-    await axios.post(`${serverBaseURL}storage/set`, data)
+    await axios.post(`${serverBaseURL}storage/set`, data ,{withCredentials: true})
         .then(function (response) {
             if (response.status == 201) {
                 data.id = response.data
@@ -24,7 +24,7 @@ async function set(id, title, content) {
 }
 
 async function remove(id) {
-    axios.delete(`${serverBaseURL}storage/delete/${id}`)
+    axios.delete(`${serverBaseURL}storage/delete/${id}`,{withCredentials: true})
         .catch(function (error) {
             alert(`item deletion is denied, ${error}`);
         });
@@ -32,7 +32,7 @@ async function remove(id) {
 
 async function getAll() {
     let todoMap = {}
-    await axios.get(`${serverBaseURL}storage/all`)
+    await axios.get(`${serverBaseURL}storage/all`,{withCredentials: true})
         .then(function (response) {
             todoMap = response.data
         })
@@ -44,7 +44,7 @@ async function getAll() {
 
 async function get(id) {
     let todoItem = {}
-    await axios.get(`${serverBaseURL}storage/get/${id}`)
+    await axios.get(`${serverBaseURL}storage/get/${id}`,{withCredentials: true})
         .then(function (response) {
             todoItem = response.data
         })

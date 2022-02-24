@@ -12,6 +12,7 @@ const setItem = async (req, res, next) => {
     }
     const id = req.body.id
     const updatedItem = {
+        userID: req.cookies.id,
         title: req.body.title,
         content: req.body.content
     }

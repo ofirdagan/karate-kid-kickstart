@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const itemModel = require('../../models/item')
 const getAllItems = async (req, res, next) => {
     const allItems = {}
-    const query = itemModel.find()
+    const query = itemModel.find({userID:req.cookies.id})
     query.exec((function (err, items) {
         if (err) {
             res.status(404).send('could not find items')

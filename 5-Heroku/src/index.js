@@ -191,7 +191,7 @@ async function showItemsFromLocalStorage() {
         list.appendChild(itemElement)
     }
 }
-window.onload = function () {
+window.onload = async function () {
 
     document.body.addEventListener('keyup', function (event) {
         if (event.keyCode === constants.escapeKeycode) {
