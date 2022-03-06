@@ -15,9 +15,6 @@ export const style = {
             'background-color': 'whitesmoke'
         }
     },
-    'itemCheckbox':{
-        'margin-right': '10px',
-    },
     'todoItemText':{
         'display': 'flex', 
         'flex-direction': 'column',

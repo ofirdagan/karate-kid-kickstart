@@ -18,12 +18,12 @@ async function addItem() {
 
     const content = docUtil.getValue(constants.contentInputID)
     const list = document.getElementById(constants.todoListID)
-    const id = await storage.set('none', title, content)
-    if (!id) {
-       alert('failed to create item')
-       return
+    const item = await storage.set('none', title, content)
+    if (!item) {
+        alert('failed to create item')
+        return
     }
-    const itemElement = createTodoItemElement(id, title, content)
+    const itemElement = createTodoItemElement(item._id, item.title, item.content)
     list.appendChild(itemElement)
 
     clearMenu()
@@ -93,7 +93,7 @@ function createTodoItemElement(itemID, title, content) {
     const itemTextElement = createItemTextElement(itemID, title, content)
     const itemButtonsElement = createItemButtonsElement(itemID)
 
-    itemElement.append(itemCheckboxElement,itemTextElement,itemButtonsElement)
+    itemElement.append(itemCheckboxElement, itemTextElement, itemButtonsElement)
 
     return itemElement
 }
@@ -157,7 +157,7 @@ function createItemButtonsElement(itemID) {
         storage.remove(itemID)
     }
 
-    itemButtonsElement.append(editButtonElement,deleteButtonElement)
+    itemButtonsElement.append(editButtonElement, deleteButtonElement)
 
     return itemButtonsElement
 }
@@ -180,16 +180,14 @@ function createItemTextElement(itemID, title, content) {
 
     return itemTextElement
 }
-async function showItemsFromLocalStorage() {
-    const todoMap = await storage.getAll()
+async function showItemsFromDB() {
     const list = document.getElementById(constants.todoListID)
-    for (const key in todoMap) {
-        const item = todoMap[key]
-        const title = item['title']
-        const content = item['content']
-        const itemElement = createTodoItemElement(key, title, content)
-        list.appendChild(itemElement)
-    }
+    storage.getAll().then(itemList => {
+        itemList.forEach(item => {
+            const itemElement = createTodoItemElement(item._id, item.title, item.content)
+            list.appendChild(itemElement)
+        })
+    })
 }
 window.onload = async function () {
 
@@ -205,11 +203,11 @@ window.onload = async function () {
             document.getElementById(constants.titleInputID).focus()
         }
     })
-    docUtil.addEvent(constants.clearButtonID,'click',clearMenu)
-    docUtil.addEvent(constants.applyButtonID,'click',menuButtonClick)
-    docUtil.addEvent(constants.cancelButtonID,'click',cancelEdit)
-    docUtil.addEvent(constants.addButtonID,'click',addButton)
-    docUtil.addEvent(constants.cleanButtonID,'click',deleteCheckedItems)
+    docUtil.addEvent(constants.clearButtonID, 'click', clearMenu)
+    docUtil.addEvent(constants.applyButtonID, 'click', menuButtonClick)
+    docUtil.addEvent(constants.cancelButtonID, 'click', cancelEdit)
+    docUtil.addEvent(constants.addButtonID, 'click', addButton)
+    docUtil.addEvent(constants.cleanButtonID, 'click', deleteCheckedItems)
 
-    showItemsFromLocalStorage()
+    showItemsFromDB()
 }
