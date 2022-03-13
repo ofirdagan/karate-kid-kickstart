@@ -1,12 +1,11 @@
-import mongoose, { Schema, model } from 'mongoose'
-
-export interface Item {
-    userID: String,
-    title: String,
-    content: String
-}
+import { Schema, model } from 'mongoose'
+import { Item } from '../interfaces/Item'
 
 const itemSchema: Schema = new Schema<Item>({
+    _id: {
+        type: String,
+        required: true
+    },
     userID: {
         type: String,
         required: true
@@ -16,7 +15,8 @@ const itemSchema: Schema = new Schema<Item>({
         required: true
     },
     content: {
-        type: String
+        type: String,
+        default: ''
     }
 })
 const itemModel = model<Item>('item', itemSchema)

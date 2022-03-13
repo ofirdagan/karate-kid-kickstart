@@ -1,11 +1,11 @@
 {
-  "name": "5_Heroku",
+  "name": "6-Typescript",
   "version": "1.0.0",
   "description": "",
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development webpack serve",
-    "start": "npx tsc && nodemon ./dist/app.js",
+    "start": "npx tsc && nodemon ./dist/index.js",
     "test": "jest --watchAll"
   },
   "author": "",

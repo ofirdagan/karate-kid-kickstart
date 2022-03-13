@@ -1,55 +1,40 @@
 import { Request, Response } from 'express'
-export class TodoConteroller {
+import { Item } from '../interfaces/Item'
+export class TodoController {
     db: any
     constructor(db: any) {
         this.db = db
     }
-    getAllItems = (req: Request, res: Response) => {
+    getAllItems = (req: Request, res: Response<Item[] | string>) => {
         this.db.getAllItemsFromDB(req.cookies.id)
-            .then((itemList: Object) => res.status(200).send(itemList))
-            .catch((err: Error) => {
-                res.status(500).send('could not get items, ' + err)
-            })
+            .then((itemList: Item[]) => res.status(200).send(itemList))
+            .catch((err: Error) => res.status(400).send('could not get items, ' + err))
+    }
+    getItem = (req: Request, res: Response<Item | string>) => {
+        req.params?.id === '' ? res.status(400).send(`missing item id`) :
+            this.db.getItemFromDB(req.params.id)
+                .then((item: Item) => {
+                    item._id ? res.status(200).send(item) :
+                        res.status(404).send(`item ${req.params.id ? `no: ${req.params.id} ` : ''}not found`)
+                })
+                .catch((err: Error) => res.status(400).send(`could not get item ${req.params.id ? `no: ${req.body?.id}` : ''}`))
+    }
+    setItem = (req: Request, res: Response<Item | string>) => {
+        !req.body?.id || req.body?.title === '' ? res.status(400).send("missing item information") :
+            this.db.setItemInDB(req.cookies.id, req.body.id, req.body.title, req.body.content)
+                .then((item: Item) => {
+                    item._id ? res.status(201).send(item) :
+                        res.status(400).send(`could not set item`)
+                }).catch((err: Error) => res.status(400).send(`could not set item${req.body.id ? ` no: ${req.body?.id}` : ''}, ${err}`))
+    }
+    removeItem = (req: Request, res: Response<Item | string>) => {
+        req.params?.id === '' ? res.status(404).send(`missing item number`) :
+            this.db.removeItemFromDB(req.params.id)
+                .then((deletedItem: Item) => {
+                    deletedItem?._id ? res.status(200).send(deletedItem) :
+                        res.status(404).send(`item ${req.params.id ? 'no: ' + req.params.id + ' ' : ''}not found`)
+                }).catch((err: Error) => res.status(400).send(`could not delete item${req.params.id ? ` no: ${req.params.id}` : ''}, ${err}`))
 
-    }
-    getItem = (req: Request, res: Response) => {
-        if (req.params?.id === '') {
-            res.status(404).send(`missing item id`)
-            return
-        }
-        this.db.getItemFromDB(req.params.id)
-            .then((item: any[]) => res.status(200).send(item))
-            .catch((err: Error) => res.status(404).send(`item ${req.params.id ? 'no: ' + req.params.id + ' ' : ''}not found`))
-    }
-    setItem = (req: Request, res: Response) => {
-        if (!req.body?.id) {
-            res.status(400).send("missing item information")
-            return
-        }
-        if (req.body?.title === '') {
-            res.status(400).send(`can not set an item with no title`)
-            return
-        }
-        this.db.setItemInDB(req.cookies.id, req.body.id, req.body.title, req.body.content)
-            .then((item: object) => {
-                if (!item) {
-                    res.status(500).send(`could not set item`)
-                }
-                res.status(201).send(item)
-            }).catch((err: Error) => res.status(500).send(`could not set item, ${err}`))
-    }
-    removeItem = (req: Request, res: Response) => {
-        if (req.params?.id === '') {
-            res.status(404).send(`missing item number`)
-            return
-        }
-        this.db.removeItemFromDB(req.params.id).then((messege: object) => {
-            if (!messege) {
-                res.status(404).send(`item no: ${req.params.id} not found`)
-                return
-            }
-            res.status(200).send(`deleted item no: ${req.params.id}`)
-        }).catch((err: Error) => res.status(500).send(`unable to delete item no: ${req.params.id}, ${err}`))
     }
 
 }

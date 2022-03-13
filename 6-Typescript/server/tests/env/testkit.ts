@@ -1,12 +1,11 @@
+import { DB } from "../../interfaces/DB"
+import { App } from "../../interfaces/App"
 export class Testkit{
-    app:any
-    db:any
-    constructor(appDriver:any, dbDriver:any){
+    app:App
+    db:DB
+    constructor(appDriver:App, dbDriver:DB){
         this.app = appDriver
         this.db = dbDriver
-    }
-    setUserCookie(id:string){
-        this.app.setUserCookie(id)
     }
     async before(){
         await this.db.connect()

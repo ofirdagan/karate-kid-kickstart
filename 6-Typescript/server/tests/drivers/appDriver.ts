@@ -5,9 +5,11 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import IDinCookie from '../../middleware/IDinCookie'
 import { todosRouter } from '../../routes/todos'
-import { Item } from '../../models/item'
+import { Item } from '../../interfaces/Item'
+import { App } from '../../interfaces/App'
+import { DB } from '../../interfaces/DB'
 
-export class AppDriver {
+export class AppDriver implements App{
     url: string
     httpClient: any
     constructor(baseURL: any, httpClient: any) {
@@ -21,7 +23,7 @@ export class AppDriver {
             }
         }
     }
-    start(db: any) {
+    start(db: DB):void {
         const port: string = process.env.SERVER_PORT || '3000'
         const app: Application = express()
         app.use(bodyParser.json());
@@ -33,38 +35,19 @@ export class AppDriver {
     close() {
     }
     async set(id: string, title: string, content: string): Promise<Item> {
-        try {
-            const response = await this.httpClient
-                .post(`${this.url}todos/set`,
-                    { id, title, content },
-                    this.cookieHeader('1'))
-            return response.data
-        } catch (err) {
-            throw err
-        }
+        const response = await this.httpClient.post(`${this.url}todos/set`, { id, title, content }, this.cookieHeader('1'))
+        return response.data
     }
-    async remove(id: string) {
-        try {
-            return await this.httpClient.delete(`${this.url}todos/delete/${id}`, this.cookieHeader('1'))
-
-        } catch (err) {
-            throw err
-        }
+    async remove(id: string): Promise<Item> {
+        const response = await this.httpClient.delete(`${this.url}todos/delete/${id}`, this.cookieHeader('1'))
+        return response.data
     }
     async getAll(): Promise<Item[]> {
-        try {
-            const response = await this.httpClient.get(`${this.url}todos/all`, this.cookieHeader('1'))
-            return response.data
-        } catch (err) {
-            throw err
-        }
+        const response = await this.httpClient.get(`${this.url}todos/all`, this.cookieHeader('1'))
+        return response.data
     }
     async get(id: string): Promise<Item> {
-        try {
-            const response = await this.httpClient.get(`${this.url}todos/get/${id}`, this.cookieHeader('1'))
-            return response.data
-        } catch (err) {
-            throw err
-        }
+        const response = await this.httpClient.get(`${this.url}todos/get/${id}`, this.cookieHeader('1'))
+        return response.data
     }
 }

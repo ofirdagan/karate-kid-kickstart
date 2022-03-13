@@ -1,13 +1,13 @@
 import { MongoMemoryServer } from "mongodb-memory-server"
 import { dbController } from "../../db/dbController"
-import { IdbConnection } from "../../interfaces/idbConnection"
+import { DB } from "../../interfaces/DB"
 import mongoose from "mongoose"
 
-export class DBDriver extends dbController implements IdbConnection {
+export class DBDriver extends dbController implements DB {
     model: any
-    db: dbController
+    db: DB
     mongoServer: MongoMemoryServer = new MongoMemoryServer
-    constructor(db: any, model: any) {
+    constructor(db: DB, model: any) {
         super(model)
         this.model = model
         this.db = db
@@ -21,7 +21,6 @@ export class DBDriver extends dbController implements IdbConnection {
         } catch {
             return false
         }
-
     }
     async disconnect(): Promise<boolean> {
         try {
