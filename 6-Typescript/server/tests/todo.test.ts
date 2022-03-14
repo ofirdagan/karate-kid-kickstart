@@ -1,19 +1,18 @@
 
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { Testkit } from './env/testkit'
-import itemModel from '../models/item'
 import { Item } from '../interfaces/Item'
 import { AppDriver } from './drivers/appDriver'
 import { DBDriver } from './drivers/DBDriver'
 import { MongoDBController } from '../db/mongoDBController'
-import { ObjectId } from 'mongodb'
+import {v4 as uuid} from 'uuid'
 
-const db = new MongoDBController(itemModel)
-const appDriver: AppDriver = new AppDriver('http://localhost:3000/', axios)
-const dbDriver: DBDriver = new DBDriver(db, itemModel)
+const db = new MongoDBController()
+const appDriver: AppDriver = new AppDriver('http://localhost:3000/')
+const dbDriver: DBDriver = new DBDriver(db)
 const testkit: Testkit = new Testkit(appDriver, dbDriver)
-const existingItemID: string = new ObjectId().toHexString()
-const nonExistingItemID: string = new ObjectId().toHexString()
+const existingItemID: string = uuid()
+const nonExistingItemID: string = uuid()
 
 describe("testing the app's endpoints'", () => {
     testkit.app.start(db)
@@ -21,7 +20,7 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const item: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'hello world',
             content: ''
         }
@@ -37,6 +36,7 @@ describe("testing the app's endpoints'", () => {
             expect(onlyItem.title).toBe(expected.title)
             expect(onlyItem.content).toBe(expected.content)
         } catch (err) {
+            console.log(err)
             expect(true).toBe(false)
         }
         await testkit.after()
@@ -56,7 +56,7 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const item: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'hello world',
             content: ''
         }
@@ -75,9 +75,9 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const item: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: '',
-            content: 'this item has an invalid title'
+            content: 'this item has an invalid empty title'
         }
         try {
             await testkit.app.set(item._id, item.title, item.content)
@@ -91,9 +91,9 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const item: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'new item',
-            content: 'the db is enmpy'
+            content: 'the db is empty'
         }
         try {
             const expected: Item = await testkit.app.set(item._id, item.title, item.content)
@@ -111,13 +111,13 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const originalItem: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'set to be changed',
             content: 'also set to be changed'
         }
         const expectedItem: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'changed',
             content: 'also changed'
         }
@@ -137,7 +137,7 @@ describe("testing the app's endpoints'", () => {
     test("remove a non-existing item from a user", async () => {
         await testkit.before()
         try {
-            const item = await testkit.app.remove(nonExistingItemID);
+            await testkit.app.remove(nonExistingItemID);
         } catch (err) {
             expect((err as AxiosError).response!.status).toBe(404)
             expect((err as AxiosError).response!.data).toBe(`item no: ${nonExistingItemID} not found`)
@@ -148,7 +148,7 @@ describe("testing the app's endpoints'", () => {
         await testkit.before()
         const item: Item = {
             _id: existingItemID,
-            userID: '1',
+            userID: appDriver.userID,
             title: 'hello world',
             content: ''
         }
@@ -158,7 +158,11 @@ describe("testing the app's endpoints'", () => {
             expect(deletedItem.userID).toBe(insertedItem.userID)
             expect(deletedItem.title).toBe(insertedItem.title)
             expect(deletedItem.content).toBe(insertedItem.content)
-            const nonExisingItem: Item = await testkit.db.getItemFromDB(deletedItem._id)
+            try{
+                await testkit.db.getItemFromDB(deletedItem._id)
+            }catch(err){
+                expect((err as AxiosError).message).toBe('Not found')
+            }
         } catch (err) {
             expect(true).toBe(false)
         }

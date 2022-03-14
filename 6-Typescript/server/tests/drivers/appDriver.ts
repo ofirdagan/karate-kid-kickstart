@@ -8,18 +8,19 @@ import { todosRouter } from '../../routes/todos'
 import { Item } from '../../interfaces/Item'
 import { App } from '../../interfaces/App'
 import { DB } from '../../interfaces/DB'
-
+import axios from 'axios'
+import {v4 as uuid} from 'uuid'
 export class AppDriver implements App{
     url: string
-    httpClient: any
-    constructor(baseURL: any, httpClient: any) {
+    userID: string
+    constructor(baseURL: string) {
         this.url = baseURL
-        this.httpClient = httpClient
+        this.userID = uuid()
     }
-    cookieHeader(id: string) {
+    cookieHeader(userID: string) {
         return {
             headers: {
-                Cookie: `id=${id};`,
+                Cookie: `id=${userID};`,
             }
         }
     }
@@ -35,19 +36,19 @@ export class AppDriver implements App{
     close() {
     }
     async set(id: string, title: string, content: string): Promise<Item> {
-        const response = await this.httpClient.post(`${this.url}todos/set`, { id, title, content }, this.cookieHeader('1'))
+        const response = await axios.post(`${this.url}todos/set`, { id, title, content }, this.cookieHeader(this.userID))
         return response.data
     }
     async remove(id: string): Promise<Item> {
-        const response = await this.httpClient.delete(`${this.url}todos/delete/${id}`, this.cookieHeader('1'))
+        const response = await axios.delete(`${this.url}todos/delete/${id}`, this.cookieHeader(this.userID))
         return response.data
     }
     async getAll(): Promise<Item[]> {
-        const response = await this.httpClient.get(`${this.url}todos/all`, this.cookieHeader('1'))
+        const response = await axios.get(`${this.url}todos/all`, this.cookieHeader(this.userID))
         return response.data
     }
     async get(id: string): Promise<Item> {
-        const response = await this.httpClient.get(`${this.url}todos/get/${id}`, this.cookieHeader('1'))
+        const response = await axios.get(`${this.url}todos/get/${id}`, this.cookieHeader(this.userID))
         return response.data
     }
 }

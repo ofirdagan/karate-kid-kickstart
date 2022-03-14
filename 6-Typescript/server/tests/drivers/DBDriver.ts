@@ -1,18 +1,17 @@
 import { MongoMemoryServer } from "mongodb-memory-server"
 import { dbController } from "../../db/dbController"
 import { DB } from "../../interfaces/DB"
+import { Item } from "../../interfaces/Item"
 import mongoose from "mongoose"
 
 export class DBDriver extends dbController implements DB {
-    model: any
     db: DB
     mongoServer: MongoMemoryServer = new MongoMemoryServer
-    constructor(db: DB, model: any) {
-        super(model)
-        this.model = model
+    constructor(db: DB) {
+        super()
         this.db = db
     }
-    async connect(): Promise<boolean> {
+    connect = async (): Promise<boolean> => {
         try {
             this.mongoServer = await MongoMemoryServer.create()
             const uri = this.mongoServer.getUri();
@@ -22,7 +21,7 @@ export class DBDriver extends dbController implements DB {
             return false
         }
     }
-    async disconnect(): Promise<boolean> {
+    disconnect = async (): Promise<boolean> => {
         try {
             await mongoose.connection.dropDatabase();
             await mongoose.connection.close();
@@ -32,4 +31,12 @@ export class DBDriver extends dbController implements DB {
             return false
         }
     }
+    getAllItemsFromDB = async (userID: string): Promise<Item[]> =>
+        await this.db.getAllItemsFromDB(userID)
+    setItemInDB = async (userID: string, _id: string, title: string, content: string): Promise<Item> =>
+        await this.db.setItemInDB(userID, _id, title, content)
+    getItemFromDB = async (_id: string): Promise<Item> =>
+        await this.db.getItemFromDB(_id)
+    removeItemFromDB = async (_id: string): Promise<Item> =>
+        await this.db.removeItemFromDB(_id)
 }

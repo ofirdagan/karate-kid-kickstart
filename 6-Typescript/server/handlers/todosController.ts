@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { Item } from '../interfaces/Item'
+import { DB } from '../interfaces/DB'
 export class TodoController {
-    db: any
-    constructor(db: any) {
+    db: DB
+    constructor(db: DB) {
         this.db = db
     }
     getAllItems = (req: Request, res: Response<Item[] | string>) => {
@@ -17,7 +18,9 @@ export class TodoController {
                     item._id ? res.status(200).send(item) :
                         res.status(404).send(`item ${req.params.id ? `no: ${req.params.id} ` : ''}not found`)
                 })
-                .catch((err: Error) => res.status(400).send(`could not get item ${req.params.id ? `no: ${req.body?.id}` : ''}`))
+                .catch((err: Error) => err.message == 'Not found' ?
+                    res.status(404).send(`item${req.params.id ? ` no: ${req.params.id}` : ''} not found`) :
+                    res.status(400).send(`could not get item ${req.params.id ? `no: ${req.body?.id}` : ''}, ${err.message}`))
     }
     setItem = (req: Request, res: Response<Item | string>) => {
         !req.body?.id || req.body?.title === '' ? res.status(400).send("missing item information") :
@@ -25,7 +28,9 @@ export class TodoController {
                 .then((item: Item) => {
                     item._id ? res.status(201).send(item) :
                         res.status(400).send(`could not set item`)
-                }).catch((err: Error) => res.status(400).send(`could not set item${req.body.id ? ` no: ${req.body?.id}` : ''}, ${err}`))
+                }).catch((err: Error) => err.message == 'Not found' ?
+                    res.status(404).send(`item${req.body.id ? ` no: ${req.body.id}` : ''} not found`) :
+                    res.status(400).send(`could not set item${req.body.id ? ` no: ${req.body?.id}` : ''}, ${err}`))
     }
     removeItem = (req: Request, res: Response<Item | string>) => {
         req.params?.id === '' ? res.status(404).send(`missing item number`) :

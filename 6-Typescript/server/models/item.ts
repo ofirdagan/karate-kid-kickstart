@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { Item } from '../interfaces/Item'
+import { Item, Guid} from '../interfaces/Item'
 
 const itemSchema: Schema = new Schema<Item>({
     _id: {
@@ -16,7 +16,8 @@ const itemSchema: Schema = new Schema<Item>({
     },
     content: {
         type: String,
-        default: ''
+        default: '',
+        required: false
     }
 })
 const itemModel = model<Item>('item', itemSchema)

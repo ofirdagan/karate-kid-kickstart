@@ -1,6 +1,7 @@
+export type Guid = string
 export interface Item {
-    _id: string,
-    userID: string,
+    _id: Guid,
+    userID: Guid,
     title: string,
     content: string
 }
