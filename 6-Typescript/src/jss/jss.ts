@@ -4,4 +4,5 @@ import * as listStyle from './styles/list-jss'
 
 jss.setup(preset())
 
-export const { classes } = jss.createStyleSheet(listStyle.style).attach()
+const { classes } = jss.createStyleSheet(listStyle.style).attach()
+export default classes

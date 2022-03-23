@@ -1,12 +1,14 @@
-import { MongoMemoryServer } from "mongodb-memory-server"
-import { dbController } from "../../db/dbController"
-import { DB } from "../../interfaces/DB"
-import { Item } from "../../interfaces/Item"
-import mongoose from "mongoose"
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import dbController from '../../db/dbController'
+import DB from '../../interfaces/DB'
+import Item from '../../../common/interfaces/Item'
+import mongoose from 'mongoose'
+import Guid from '../../../common/types/Guid'
+import UserID from '../../../common/types/userID'
 
-export class DBDriver extends dbController implements DB {
+export default class DBDriver extends dbController implements DB {
     db: DB
-    mongoServer: MongoMemoryServer = new MongoMemoryServer
+    mongoServer?: MongoMemoryServer
     constructor(db: DB) {
         super()
         this.db = db
@@ -14,29 +16,31 @@ export class DBDriver extends dbController implements DB {
     connect = async (): Promise<boolean> => {
         try {
             this.mongoServer = await MongoMemoryServer.create()
-            const uri = this.mongoServer.getUri();
+            const uri = this.mongoServer.getUri()
             await mongoose.connect(uri)
             return true
-        } catch {
+        } catch (err) {
+            console.log('couldnt connect', err)
             return false
         }
     }
     disconnect = async (): Promise<boolean> => {
         try {
-            await mongoose.connection.dropDatabase();
-            await mongoose.connection.close();
-            await this.mongoServer.stop()
+            await mongoose.connection.dropDatabase()
+            await mongoose.connection.close()
+            await this.mongoServer?.stop()
             return true
-        } catch {
+        } catch (err) {
+            console.log(err)
             return false
         }
     }
-    getAllItemsFromDB = async (userID: string): Promise<Item[]> =>
+    getAllItemsFromDB = async (userID: UserID): Promise<Item[]> =>
         await this.db.getAllItemsFromDB(userID)
-    setItemInDB = async (userID: string, _id: string, title: string, content: string): Promise<Item> =>
-        await this.db.setItemInDB(userID, _id, title, content)
-    getItemFromDB = async (_id: string): Promise<Item> =>
+    setItemInDB = async (item:Item): Promise<Item> =>
+        await this.db.setItemInDB(item)
+    getItemFromDB = async (_id: Guid): Promise<Item> =>
         await this.db.getItemFromDB(_id)
-    removeItemFromDB = async (_id: string): Promise<Item> =>
+    removeItemFromDB = async (_id: Guid): Promise<Item> =>
         await this.db.removeItemFromDB(_id)
 }

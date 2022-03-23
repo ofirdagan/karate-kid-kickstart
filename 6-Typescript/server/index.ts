@@ -1,5 +1,5 @@
 import makeApp from './app'
-import { MongoDBController } from "./db/mongoDBController";
+import MongoDBController from './db/mongoDBController';
 import * as dotenv from 'dotenv'
 dotenv.config({ path: '.env' })
 

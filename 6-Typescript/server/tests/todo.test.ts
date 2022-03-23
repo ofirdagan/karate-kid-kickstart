@@ -1,171 +1,139 @@
 
 import { AxiosError } from 'axios'
-import { Testkit } from './env/testkit'
-import { Item } from '../interfaces/Item'
-import { AppDriver } from './drivers/appDriver'
-import { DBDriver } from './drivers/DBDriver'
-import { MongoDBController } from '../db/mongoDBController'
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
+import Testkit from './env/testkit'
+import Item from '../../common/interfaces/Item'
+import AppDriver from './drivers/appDriver'
+import DBDriver from './drivers/DBDriver'
+import MongoDBController from '../db/mongoDBController'
+import Guid from '../../common/types/Guid'
+import UserID from '../../common/types/userID'
 
 const db = new MongoDBController()
-const appDriver: AppDriver = new AppDriver('http://localhost:3000/')
+const appDriver: AppDriver = new AppDriver('http://localhost:3000')
 const dbDriver: DBDriver = new DBDriver(db)
 const testkit: Testkit = new Testkit(appDriver, dbDriver)
-const existingItemID: string = uuid()
-const nonExistingItemID: string = uuid()
 
-describe("testing the app's endpoints'", () => {
-    testkit.app.start(db)
-    test("get all items from a user", async () => {
-        await testkit.before()
-        const item: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'hello world',
-            content: ''
-        }
-        try {
-            const emptyItemList: Item[] = await testkit.app.getAll()
-            expect(emptyItemList.length).toBe(0)
-            const expected: Item = await testkit.db.setItemInDB(item.userID, item._id, item.title, item.content)
-            const itemList: Item[] = await testkit.app.getAll()
-            expect(itemList.length).toBe(1)
-            const onlyItem: Item = itemList[0]
-            expect(onlyItem._id).toBe(existingItemID)
-            expect(onlyItem.userID).toBe(expected.userID)
-            expect(onlyItem.title).toBe(expected.title)
-            expect(onlyItem.content).toBe(expected.content)
-        } catch (err) {
-            console.log(err)
-            expect(true).toBe(false)
-        }
-        await testkit.after()
+const mainUserID: UserID = appDriver.userID
+const otherUserID: UserID = uuid()
+
+const existingItemID: Guid = uuid()
+const nonExistingItemID: Guid = uuid()
+
+
+describe("todos router", () => {
+
+    beforeAll(async () => await testkit.app.start(db))
+    beforeEach(async () => await testkit.before())
+    afterEach(async () => await testkit.after())
+    afterAll(async () => await testkit.app.close())
+
+    it("should get an empty list from a user with no items", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+
+        const emptyItemList: Item[] = await testkit.app.getAll()
+
+        expect(emptyItemList.length).toBe(0)
     })
-    test("get a non-existing item from a user", async () => {
-        await testkit.before()
+    it("should get all items from a user", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const itemsToInsert: Item[] = [
+            testkit.anItem({ userID: mainUserID }),
+            testkit.anItem({ userID: mainUserID }),
+            testkit.anItem({ userID: otherUserID })
+        ]
+        const insertedItems: Item[] = await testkit.setItemsInDB(itemsToInsert)
+
+        const mainUserItems: Item[] = await testkit.app.getAll()
+
+        expect(mainUserItems.length).toBe(2)
+        expect(mainUserItems[0]).toEqual(insertedItems[0])
+        expect(mainUserItems[1]).toEqual(insertedItems[1])
+    })
+    it("should throw exception when getting a non-existing item", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+
         try {
-            const emptyItem: Item = await testkit.app.get(nonExistingItemID)
-            expect(emptyItem).toEqual({})
+            //when
+            expect(await testkit.app.get(nonExistingItemID)).toThrow()
         } catch (err) {
+            //then
             expect((err as AxiosError).response!.status).toBe(404)
             expect((err as AxiosError).response!.data).toBe(`item no: ${nonExistingItemID} not found`)
         }
-        await testkit.after()
     })
-    test("get an existing item from a user", async () => {
-        await testkit.before()
-        const item: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'hello world',
-            content: ''
-        }
-        try {
-            const expected: Item = await testkit.db.setItemInDB(item.userID, item._id, item.title, item.content)
-            const itemFromUser: Item = await testkit.app.get(expected._id.toString());
-            expect(itemFromUser.userID).toBe(expected.userID)
-            expect(itemFromUser.title).toBe(expected.title)
-            expect(itemFromUser.content).toBe(expected.content)
-        } catch (err) {
-            expect(true).toBe(false)
-        }
-        await testkit.after()
+    it("should get an existing item", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const insertedItem: Item = await testkit.db.setItemInDB(testkit.anItem({ _id: existingItemID, userID: mainUserID }))
+
+        const retrivedItem: Item = await testkit.app.get(insertedItem._id)
+
+        expect(retrivedItem).toEqual(insertedItem)
     })
-    test("set an invalid item for a user", async () => {
-        await testkit.before()
-        const item: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: '',
-            content: 'this item has an invalid empty title'
-        }
+    it("should throw exception when setting an invalid item (w/o title)", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const invalidItemObject: Item = testkit.anItem({ title: '' })
+
         try {
-            await testkit.app.set(item._id, item.title, item.content)
-            expect(false).toBe(true)
+            //when
+            expect(await testkit.app.set(invalidItemObject)).toThrow()
         } catch (err) {
-            expect((err as AxiosError).response!.data).toBe('missing item information')
+            //then
+            expect((err as AxiosError).response!.data)
+                .toBe(`could not set item no: ${invalidItemObject._id}, item validation failed: title: Path \`title\` is required.`)
         }
-        await testkit.after()
     })
-    test("set a new item for a user", async () => {
-        await testkit.before()
-        const item: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'new item',
-            content: 'the db is empty'
-        }
-        try {
-            const expected: Item = await testkit.app.set(item._id, item.title, item.content)
-            const newItem: Item = await testkit.db.getItemFromDB(expected._id)
-            expect(newItem.userID).toBe(expected.userID)
-            expect(newItem.title).toBe(expected.title)
-            expect(newItem.content).toBe(expected.content)
-        } catch (err) {
-            expect((err as AxiosError).response!.status).toBe(404)
-            expect((err as AxiosError).response!.data).toBe('can not set an item with no title')
-        }
-        await testkit.after()
+    it("should set a new valid item", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const item: Item = testkit.anItem({ _id: existingItemID, userID: mainUserID })
+
+        const insertedItem: Item = await testkit.app.set(item)
+
+        const retrivedItem: Item = await testkit.db.getItemFromDB(insertedItem._id)
+        expect(retrivedItem).toEqual(insertedItem)
     })
-    test("update an existing item for a user", async () => {
-        await testkit.before()
-        const originalItem: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'set to be changed',
-            content: 'also set to be changed'
-        }
-        const expectedItem: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'changed',
-            content: 'also changed'
-        }
-        try {
-            const notExpectedItem: Item = await testkit.db.setItemInDB(originalItem.userID, originalItem._id, originalItem.title, originalItem.content)
-            const itemFromUser: Item = await testkit.app.set(notExpectedItem._id, expectedItem.title, expectedItem.content);
-            expect(itemFromUser.userID).toBe(expectedItem.userID)
-            expect(itemFromUser.title).toBe(expectedItem.title)
-            expect(itemFromUser.content).toBe(expectedItem.content)
-            expect(itemFromUser.title).not.toBe(notExpectedItem.title)
-            expect(itemFromUser.content).not.toBe(notExpectedItem.content)
-        } catch (err) {
-            expect(true).toBe(false)
-        }
-        await testkit.after()
+    it("should update an existing item with valid item properties", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const oldItem: Item = await testkit.db.setItemInDB(testkit.anItem({ _id: existingItemID, userID: mainUserID }))
+        const newItem: Item = testkit.anItem({ _id: existingItemID, userID: mainUserID })
+
+        const itemInDB: Item = await testkit.app.set(newItem)
+
+        expect(itemInDB).toEqual(newItem)
+        expect(itemInDB).not.toEqual(oldItem)
     })
-    test("remove a non-existing item from a user", async () => {
-        await testkit.before()
+    it("should throw exception when removing a non-existing item", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+
         try {
-            await testkit.app.remove(nonExistingItemID);
+            //when
+            expect(await testkit.app.remove(nonExistingItemID)).toThrow()
         } catch (err) {
+            //then
             expect((err as AxiosError).response!.status).toBe(404)
             expect((err as AxiosError).response!.data).toBe(`item no: ${nonExistingItemID} not found`)
         }
-        await testkit.after()
     })
-    test("remove an existing item from a user", async () => {
-        await testkit.before()
-        const item: Item = {
-            _id: existingItemID,
-            userID: appDriver.userID,
-            title: 'hello world',
-            content: ''
-        }
+    it("should remove an existing item", async () => {
+
+        appDriver.setUserIDInCookie(mainUserID)
+        const insertedItem: Item = await testkit.db.setItemInDB(testkit.anItem({ _id: existingItemID, userID: mainUserID }))
+
+        const deletedItem: Item = await testkit.app.remove(insertedItem._id)
+
+        expect(deletedItem).toEqual(insertedItem)
         try {
-            const insertedItem: Item = await testkit.db.setItemInDB(item.userID, item._id, item.title, item.content);
-            const deletedItem: Item = await testkit.app.remove(insertedItem._id);
-            expect(deletedItem.userID).toBe(insertedItem.userID)
-            expect(deletedItem.title).toBe(insertedItem.title)
-            expect(deletedItem.content).toBe(insertedItem.content)
-            try{
-                await testkit.db.getItemFromDB(deletedItem._id)
-            }catch(err){
-                expect((err as AxiosError).message).toBe('Not found')
-            }
+            expect(await testkit.db.getItemFromDB(deletedItem._id)).toThrow()
         } catch (err) {
-            expect(true).toBe(false)
+            expect((err as AxiosError).message).toBe('Not found')
         }
-        await testkit.after()
     })
 })

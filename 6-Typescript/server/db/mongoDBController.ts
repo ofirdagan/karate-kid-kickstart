@@ -1,39 +1,57 @@
 
-import { connect } from "mongoose"
-import { DB } from "../interfaces/DB"
-import * as dotenv from 'dotenv'
-import { dbController } from "./dbController"
-import { Item } from '../interfaces/Item'
+import mongoose, { connect } from 'mongoose'
+import Item, { toItem } from '../../common/interfaces/Item'
+import DB from '../interfaces/DB'
+import dbController from './dbController'
 import itemModel from '../models/item'
-
+import Guid from '../../common/types/Guid'
+import UserID from '../../common/types/userID'
+import * as dotenv from 'dotenv'
 dotenv.config({ path: '.env' })
 
-export class MongoDBController extends dbController implements DB {
+export default class MongoDBController extends dbController implements DB {
 
     constructor() {
         super()
     }
-    getAllItemsFromDB = async (userID: string): Promise<Item[]> => {
-        return await itemModel.find({ userID: userID }).lean(true)
+    async getAllItemsFromDB(userID: UserID): Promise<Item[]> {
+        const itemFromDB = await itemModel.find({ userID: userID }).lean(true)
+        const itemList: Item[] = []
+        itemFromDB.forEach((item: Item) => itemList.push(toItem(item)))
+        return itemList
     }
-    setItemInDB = async (userID: string, _id: string, title: string, content: string): Promise<Item> => {
+    async setItemInDB(item: Item): Promise<Item> {
+        const { _id, userID, title, content } = item
         const existingItems: Item[] = await itemModel.find({ _id }).lean(true)
-        if (!existingItems.length) return await itemModel.create({ _id, userID, title, content })
+        if (!existingItems.length) return toItem(await itemModel.create({ _id, userID, title, content }))
         await itemModel.findOneAndUpdate({ _id }, { userID, title, content }).lean(true)
-        return { _id, userID, title, content }
+        return item
     }
-    getItemFromDB = async (_id: string): Promise<Item> => {
-        const items: Item[] = await itemModel.find({ _id }).lean(true)
+    async getItemFromDB(id: Guid): Promise<Item> {
+        const items: Item[] = await itemModel.find({ _id: id }).lean(true)
         if (!items.length) throw new Error('Not found')
-        return items[0]
+        return toItem(items[0])
     }
-    removeItemFromDB = async (_id: string): Promise<Item> => {
-        return await itemModel.findOneAndDelete({ _id }).lean(true)
+    async removeItemFromDB(id: Guid): Promise<Item> {
+        const deletedItem = await itemModel.findOneAndDelete({ _id: id }).lean(true)
+        if (!deletedItem) throw new Error('Not found')
+        return toItem(deletedItem)
     }
     connect = async (): Promise<boolean> => {
         const url: string = (process.env.MONGO_URL as string)
-        await connect(url)
-        return true
+        try {
+            await connect(url)
+            return true
+        } catch (err) {
+            return false
+        }
     }
-    disconnect = async (): Promise<boolean> => { return Promise.resolve(true) }
+    disconnect = async (): Promise<boolean> => {
+        try {
+            await mongoose.connection.close()
+            return true
+        } catch (err) {
+            return false
+        }
+    }
 }

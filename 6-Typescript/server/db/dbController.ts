@@ -1,20 +1,22 @@
-import { DB } from "../interfaces/DB";
-import { Item } from '../interfaces/Item'
+import DB from '../interfaces/DB'
+import Item from '../../common/interfaces/Item'
+import Guid from '../../common/types/Guid'
+import UserID from '../../common/types/userID'
 
-export class dbController implements DB {
-    constructor() {}
-    getAllItemsFromDB = async function (userID: string): Promise<Item[]> {
+export default class dbController implements DB {
+    constructor() { }
+    async getAllItemsFromDB(userID: UserID): Promise<Item[]> {
         throw new Error('not implemented')
     }
-    setItemInDB = async function (userID: string, _id: string, title: string, content: string): Promise<Item> {
+    async setItemInDB(item: Item): Promise<Item> {
         throw new Error('not implemented')
     }
-    getItemFromDB = async function (_id: string): Promise<Item> {
+    async getItemFromDB(_id: Guid): Promise<Item> {
         throw new Error('not implemented')
     }
-    removeItemFromDB = async function (_id: string): Promise<Item> {
+    async removeItemFromDB(_id: Guid): Promise<Item> {
         throw new Error('not implemented')
     }
-    connect = async function (): Promise<boolean> { return true }
-    disconnect = async function (): Promise<boolean> { return true }
+    async connect(): Promise<boolean> { return true }
+    async disconnect(): Promise<boolean> { return true }
 }

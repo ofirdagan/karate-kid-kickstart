@@ -1,31 +1,25 @@
 import * as constants from './modules/constants'
 import * as serverAPI from './modules/serveAPI'
-import * as docUtil from './modules/documentHelpers'
-import { Item } from '../server/interfaces/Item'
-import { classes } from './jss/jss'
-import { v4 as uuidv4 } from 'uuid';
+import * as docUtil from './modules/documentUtilities'
+import Item from '../common/interfaces/Item'
+import Guid from '../common/types/Guid'
+import classes from './jss/jss'
+import { v4 as uuid } from 'uuid'
 
-let editedID: string = '0';
-let editMode: boolean = false;
+let editedID: Guid = '';
 
 
 const deleteButtonClick = async (event: MouseEvent): Promise<void> => {
-    if (editMode) {
-        alert('cant delete while in edit mode')
-        return
-    }
-    const itemID: string = (event.target as HTMLElement).id.replace('itemDelete', '').toString()
+    if (editedID) return alert('cant delete while in edit mode')
+    const itemID: Guid = (event.target as HTMLElement).id.replace('itemDelete', '')
     const itemElement: HTMLElement = document.getElementById(itemID) as HTMLElement
     const listElement: HTMLElement = document.getElementById(constants.todoListID) as HTMLElement
-
     serverAPI.remove(itemID)
         .then(() => listElement!.removeChild(itemElement))
         .catch((error) => alert(`item deletion is denied, ${error}`))
 }
 const editButtonClick = (event: Event): void => {
-    editedID = (event.target as HTMLElement).id.replace('itemEdit', '').toString()
-    editMode = true
-
+    editedID = (event.target as HTMLElement).id.replace('itemEdit', '')
     document.getElementById(constants.cancelButtonID)!.hidden = false
     docUtil.setInnerText(constants.applyButtonID, 'Apply')
     const title: string = docUtil.getInnerText(`title${editedID}`)
@@ -34,7 +28,7 @@ const editButtonClick = (event: Event): void => {
     docUtil.setValue(constants.contentInputID, content)
 }
 const itemCheckboxClick = (event: Event): void => {
-    const itemID: string = (event.target as HTMLInputElement).id.replace('itemCheckbox', '').toString()
+    const itemID: Guid = (event.target as HTMLInputElement).id.replace('itemCheckbox', '')
     const titleElement: HTMLElement = document.getElementById(`title${itemID}`) as HTMLElement
     const contentElement: HTMLElement = document.getElementById(`content${itemID}`) as HTMLElement
     const editButtonElement: HTMLElement = document.getElementById(`itemEdit${itemID}`) as HTMLElement
@@ -45,53 +39,39 @@ const itemCheckboxClick = (event: Event): void => {
 }
 async function addItem(): Promise<void> {
     const title: string = docUtil.getValue(constants.titleInputID)
-    if (title === '') {
-        alert('cant add an item without a title')
-        return
-    }
-    if (editMode) {
-        alert('cant add an item while in edit mode')
-        return
-    }
-
+    if (!title) return alert('cant add an item without a title')
+    if (editedID) return alert('cant add an item while in edit mode')
     const content: string = docUtil.getValue(constants.contentInputID)
-    const list: HTMLElement = document.getElementById(constants.todoListID) as HTMLElement
-    const _id: string = uuidv4().toString()
-    serverAPI.set(_id, title, content).then((item: Item) => {
-        if (!item._id) {
-            alert('failed to create item')
-            return
-        }
-        const itemElement: HTMLElement = createTodoItemElement(item._id, item.title, item.content) as HTMLElement
-        list.appendChild(itemElement)
+    const itemElementList: HTMLElement = document.getElementById(constants.todoListID) as HTMLElement
+    const newItemID: Guid = uuid()
+    serverAPI.set(newItemID, title, content).then((item: Item) => {
+        if (!item._id) return alert('failed to create item')
+        const newItemElement: HTMLElement = createTodoItemElement(item._id, item.title, item.content) as HTMLElement
+        itemElementList.append(newItemElement)
         clearMenu()
         docUtil.setInnerText(constants.applyButtonID, 'Add')
     }).catch((err: Error) => alert(`failed to create item, ${err}`))
 }
 function deleteCheckedItems(): void {
-    if (editMode) {
-        alert('cant delete while in edit mode')
-        return
-    }
-    const list: HTMLElement = document.getElementById(constants.todoListID) as HTMLElement
+    if (editedID) return alert('cant delete while in edit mode')
+    const itemElementList: HTMLElement = document.getElementById(constants.todoListID) as HTMLElement
     serverAPI.getAll().then((itemList: Item[]) => {
         itemList.forEach((item: Item) => {
             const checkbox: HTMLInputElement = document.getElementById(`itemCheckbox${item._id}`) as HTMLInputElement
             if (checkbox.checked) {
-                serverAPI.remove(item._id).then((deletedItem:Item)=>{
-                    const itemElement: HTMLElement = document.getElementById(`${item._id}`) as HTMLElement
-                    list.removeChild(itemElement)
-                }).catch((err:Error)=>alert(`could not remove item ${item._id}, ${err}`))
+                serverAPI.remove(item._id).then((deletedItem: Item) => {
+                    const deletedItemElement: HTMLElement = document.getElementById(`${item._id}`) as HTMLElement
+                    itemElementList.removeChild(deletedItemElement)
+                }).catch((err: Error) => alert(`could not remove item ${item._id}, ${err}`))
             }
         })
-    }).catch((err:Error)=>alert(`could not remove all checked items, ${err}`))
+    }).catch((err: Error) => alert(`could not remove all checked items, ${err}`))
 }
 function cancelEdit(): void {
     clearMenu()
-    editMode = false
     docUtil.setInnerText(constants.applyButtonID, 'Add')
     document.getElementById(constants.cancelButtonID)!.hidden = true
-    editedID = '0'
+    editedID = ''
 }
 
 function clearMenu(): void {
@@ -99,33 +79,26 @@ function clearMenu(): void {
     docUtil.setValue(constants.contentInputID, '')
 }
 
-function menuButtonClick(): void {
-    if (!editMode) {
-        addItem()
-    } else {
-        if (docUtil.getValue(constants.titleInputID) === '') {
-            alert('cant set an empty title')
-            return
-        }
-        const title: string = docUtil.getValue(constants.titleInputID)
-        const content: string = docUtil.getValue(constants.contentInputID)
-        docUtil.setInnerText(`title${editedID}`, title)
-        docUtil.setInnerText(`content${editedID}`, content)
-        serverAPI.set(editedID, title, content).then((item: Item) => {
-            clearMenu()
-            editMode = false
-            docUtil.setInnerText(constants.applyButtonID, 'Add')
-            document.getElementById(constants.cancelButtonID)!.hidden = true
-            editedID = '0'
-        }).catch((err:Error)=>alert(`falied to set changes, ${err}`))
-    }
+async function menuButtonClick(): Promise<void> {
+    if (!editedID) return addItem()
+    const title: string = docUtil.getValue(constants.titleInputID)
+    if (!title) return alert('cant set an empty title')
+    const content: string = docUtil.getValue(constants.contentInputID)
+    docUtil.setInnerText(`title${editedID}`, title)
+    docUtil.setInnerText(`content${editedID}`, content)
+    serverAPI.set(editedID, title, content).then((item: Item) => {
+        clearMenu()
+        docUtil.setInnerText(constants.applyButtonID, 'Add')
+        document.getElementById(constants.cancelButtonID)!.hidden = true
+        editedID = ''
+    }).catch((err: Error) => alert(`falied to set changes, ${err}`))
 }
 function addButton(): void {
     clearMenu()
     document.getElementById(constants.titleInputID)!.focus()
 }
 
-function createTodoItemElement(itemID: string, title: string, content: string): HTMLElement {
+function createTodoItemElement(itemID: Guid, title: string, content: string): HTMLElement {
 
     const itemElement: HTMLElement = document.createElement('ol')
     itemElement.classList.add(classes.todoItem)
@@ -139,7 +112,7 @@ function createTodoItemElement(itemID: string, title: string, content: string): 
 
     return itemElement
 }
-function createItemCheckboxElement(itemID: string): HTMLElement {
+function createItemCheckboxElement(itemID: Guid): HTMLElement {
     const itemCheckboxElement: HTMLInputElement = document.createElement('input')
     itemCheckboxElement.type = 'checkbox'
     itemCheckboxElement.classList.add(classes.itemCheckbox)
@@ -147,7 +120,7 @@ function createItemCheckboxElement(itemID: string): HTMLElement {
     itemCheckboxElement.addEventListener('click', itemCheckboxClick)
     return itemCheckboxElement
 }
-function createItemButtonsElement(itemID: string): HTMLElement {
+function createItemButtonsElement(itemID: Guid): HTMLElement {
 
     const itemButtonsElement: HTMLElement = document.createElement('div')
     itemButtonsElement.classList.add(classes.todoItemButtons)
@@ -168,7 +141,7 @@ function createItemButtonsElement(itemID: string): HTMLElement {
 
     return itemButtonsElement
 }
-function createItemTextElement(itemID: string, title: string, content: string): HTMLElement {
+function createItemTextElement(itemID: Guid, title: string, content: string): HTMLElement {
 
     const itemTextElement: HTMLElement = document.createElement('div')
     itemTextElement.classList.add(classes.todoItemText)
@@ -194,7 +167,7 @@ async function showItemsFromDB(): Promise<void> {
             const itemElement: HTMLElement = createTodoItemElement(item._id, item.title, item.content)
             list.appendChild(itemElement)
         })
-    }).catch((err:Error)=>alert(`falied to load items, please try refreshing the page.\n ${err}`))
+    }).catch((err: Error) => alert(`falied to load items, please try refreshing the page.\n ${err}`))
 }
 window.onload = async function (): Promise<void> {
 

@@ -1,6 +1,5 @@
-import { Schema, model } from 'mongoose'
-import { Item, Guid} from '../interfaces/Item'
-
+import { Schema, model, Model } from 'mongoose'
+import Item from '../../common/interfaces/Item'
 const itemSchema: Schema = new Schema<Item>({
     _id: {
         type: String,
@@ -20,5 +19,5 @@ const itemSchema: Schema = new Schema<Item>({
         required: false
     }
 })
-const itemModel = model<Item>('item', itemSchema)
+const itemModel: Model<Item> = model<Item>('item', itemSchema)
 export default itemModel
