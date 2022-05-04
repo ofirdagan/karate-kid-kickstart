@@ -1,0 +1,12 @@
+export const titleInputID = 'title-input'
+export const addButtonID = 'add-button'
+export const contentInputID = 'content-input'
+export const applyButtonID = 'apply-button'
+export const cancelButtonID = 'cancel-button'
+export const clearButtonID = 'clear-button'
+export const cleanButtonID = 'clean-button'
+export const todoListID = 'list'
+export const menuID = 'menu'
+export const enterKeycode = 13
+export const escapeKeycode = 27
+export const serverBaseURL = 'http://localhost:3000/'
