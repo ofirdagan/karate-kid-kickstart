@@ -1,0 +1,206 @@
+:root {
+  --blue: #1e90ff;
+  --white: #ffffff;
+  --red-danger: #b63423;
+  --green: #30b44c;
+  --black: #000000;
+}
+
+body {
+  height: 100vh;
+  background-color: #63a4ff;
+  background-image: linear-gradient(315deg, #63a4ff 0%, #83eaf1 74%);
+}
+
+.header {
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+  margin-bottom: 10px;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+}
+
+.list-item-text {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.add-todo {
+  width: 100%;
+  margin: 10px 0px 30px 0px;
+  border-radius: 10px;
+  outline: 0;
+  height: 40px;
+  padding-left: 10px;
+  border: 1px solid #ccc;
+}
+.add-todo:focus {
+  border: 1px solid #63a4ff;
+}
+
+.edit-todo {
+  width: 70%;
+  border-radius: 10px;
+  outline: 0;
+  height: 30px;
+  margin-left: 10px;
+  padding-left: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+.add-todo:focus {
+  border: 1px solid #63a4ff;
+}
+
+.list {
+  width: 35vw;
+  padding: 40px;
+  background-color: #b8c6db;
+  background-image: linear-gradient(315deg, #b8c6db 0%, #f5f7fa 74%);
+  border-radius: 20px;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 350px;
+  overflow-y: scroll;
+  padding: 0px 10px;
+}
+
+.list ul li {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-item-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 15px;
+}
+.button {
+  background-color: var(--red-danger);
+  border: 1px solid var(--red-danger);
+  color: white;
+  padding: 4px 12px;
+  margin-bottom: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.button:hover {
+  background-color: transparent;
+  border: 1px solid var(--red-danger);
+  color: var(--red-danger);
+}
+
+.edit {
+  background-color: var(--green);
+  border: 1px solid var(--green);
+  color: white;
+  padding: 4px 12px;
+  margin-bottom: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.edit:hover {
+  background-color: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+
+.todo-text {
+  margin-left: 20px;
+}
+
+.finished-todo {
+  text-decoration: line-through;
+}
+.unfinished-todo {
+  text-decoration: none;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  top: 2px;
+}
+
+input:checked + .slider {
+  background-color: var(--black);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--black);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+  left: 12px;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
